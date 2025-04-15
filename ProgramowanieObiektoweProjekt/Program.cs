@@ -1,4 +1,5 @@
 ﻿using BoardNamespace;
+using StatisticTableNamespace;
 using Spectre.Console;
 
 class Program
@@ -7,15 +8,11 @@ class Program
     {
         var board1 = new Board();
         var board2 = new Board();
+        var statistic = new StatisticTable();
 
-        var tabela = new Table();
-
-        tabela.Border = TableBorder.None;
-
-
-        tabela.AddColumn(new TableColumn(board1.GetTable()));
-        tabela.AddColumn(new TableColumn(board2.GetTable()));
-
-        AnsiConsole.Write(tabela);
+        // Wyświetlanie każdej tabeli osobno
+        AnsiConsole.Write(board1.GetTable());
+        AnsiConsole.Write(board2.GetTable());
+        AnsiConsole.Write(statistic.GetTable());
     }
 }
