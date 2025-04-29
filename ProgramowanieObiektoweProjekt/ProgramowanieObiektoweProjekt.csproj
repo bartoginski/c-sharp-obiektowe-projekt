@@ -12,4 +12,8 @@
       <PackageReference Include="Spectre.Console.Cli" Version="0.50.1-preview.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Player\" />
+    </ItemGroup>
+
 </Project>
