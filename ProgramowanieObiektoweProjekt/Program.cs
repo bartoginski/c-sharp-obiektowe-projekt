@@ -1,10 +1,12 @@
 ﻿namespace ProgramowanieObiektoweProjekt;
-using Spectre.Console;
+using ProgramowanieObiektoweProjekt.Models.Boards;
 
 class Program
 {
     static void Main(string[] args)
     {
-        AnsiConsole.Markup("[underline red]Battleships[/] Game!");
+        var board = new Board();
+
+        board.DisplayBoard(false);
     }
 }
