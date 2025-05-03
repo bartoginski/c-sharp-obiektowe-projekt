@@ -6,11 +6,10 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
     internal class Board : IBoard
     {
-        // this should represent one tile
-        // class on the bottom
-        // private Tile[,] tiles;
+        private const int boardSize = 10;
+        private Tile[,] tiles = new Tile[boardSize, boardSize];
         private List<IShip> ships;
-
+        
         public void PlaceShip(IShip ship, int x, int y, Direction direction)
         {
             // code...
@@ -24,14 +23,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
         public void DisplayBoard(bool revealShips)
         {
 
-            const int boardSize = 10;
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
                 .ToArray();
             string[] rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-
-            var matrix = new int[boardSize, boardSize];
-
+            
             var board = new Table()
                 .Border(TableBorder.Rounded)
                 .Expand()
@@ -55,7 +51,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
                 for (int j = 0; j < boardSize; j++)
                 {
-                    if (matrix[i, j] == 0)
+                    // Check if tile exists and has ship
+                    if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip)
+                    {
+                        rowData[j + 1] = "^";
+                    }
+                    else
                     {
                         rowData[j + 1] = "~";
                     }
@@ -67,13 +68,4 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             AnsiConsole.Write(board);
         }
     }
-
-
-    
-
-    //class Tile
-    //{
-    //    public bool HasSHip { get; set; }
-    //    public bool IsHit { get; set; }
-    //}
 }
