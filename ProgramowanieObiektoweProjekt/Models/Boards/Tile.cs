@@ -1,7 +1,8 @@
-namespace ProgramowanieObiektoweProjekt.Models.Boards;
-    
-class Tile
+namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
-    public bool HasShip { get; set; }
-    public bool IsHit { get; set; }
+    internal class Tile
+    {
+        public bool HasShip { get; set; }
+        public bool IsHit { get; set; }
+    }
 }

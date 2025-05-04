@@ -1,12 +1,21 @@
-﻿namespace ProgramowanieObiektoweProjekt;
-using ProgramowanieObiektoweProjekt.Models.Boards;
+﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 
-class Program
+namespace ProgramowanieObiektoweProjekt
 {
-    static void Main(string[] args)
+    class Program
     {
-        var board = new Board();
+        static void Main(string[] args)
+        {
+            
+            // Tworzenie plansz i historii
+            var playerBoard = new Board();
+            var enemyBoard = new Board();
+            var history = new HistoryTab();
 
-        board.DisplayBoard(false);
+            // (opcjonalnie: rozmieszczenie statków itd.)
+
+            // Wyświetlenie layoutu z 2 planszami po lewej i historią po prawej
+            new BoardLayout(playerBoard, enemyBoard, history);
+        }
     }
 }
