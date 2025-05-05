@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Models\Boards\Nowy folder\" />
       <Folder Include="Models\Player\" />
     </ItemGroup>
 
