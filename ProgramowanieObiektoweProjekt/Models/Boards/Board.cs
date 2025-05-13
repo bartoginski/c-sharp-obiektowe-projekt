@@ -22,6 +22,17 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             new Submarine(),
             new Submarine()
         };
+
+        public Board()
+        {
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    tiles[i, j] = new Tile();
+                }
+            }
+        }
         
         
         public Tile GetTile(int x, int y)
@@ -73,7 +84,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     // Check if tile exists and has ship
                     if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip)
                     {
-                        rowData[j + 1] = "^";
+                        rowData[j + 1] = "■";
                     }
                     else
                     {

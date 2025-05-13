@@ -9,10 +9,10 @@
             _board = board;
         }
         static int currentShip = 0;
-        static bool placementComplete = false;
+        public static bool placementComplete = false;
 
-            int x_coor = 0;
-            int y_coor = 0;
+        int x_coor = 0;
+        int y_coor = 0;
 
         public void HandleKeyPress()
         {
@@ -92,7 +92,7 @@
 
                     if (neighborRow >= 0 && neighborRow < 10 &&
                         neighborCol >= 0 && neighborCol < 10 &&
-                        _board.GetTile(x_coor, y_coor).HasShip)
+                        _board.GetTile(neighborRow, neighborCol).HasShip)
                     {
                         return false;
                     }
@@ -112,7 +112,7 @@
                 // Check if there is no ships on the way in the row
                 for (int row = x_coor; row < x_coor + _board.ships[currentShip].Length; row++)
                 {
-                    if (!_board.GetTile(row,y_coor).HasShip || !IsTileAvaiable(row, y_coor))
+                    if (_board.GetTile(row,y_coor).HasShip || !IsTileAvaiable(row, y_coor))
                     {
                         return false;
                     }
