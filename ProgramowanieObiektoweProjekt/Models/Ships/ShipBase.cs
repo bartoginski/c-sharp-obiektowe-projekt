@@ -13,7 +13,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Ships
     /// </summary>
     abstract class ShipBase : IShip
     {
+        public string Name { get; protected set; }
         public int Length { get; protected set; }
+        public int NumberOfShips { get; protected set; }
+
+        public bool IsHorizontal = true;
 
         /// <summary>
         /// The number of hits the ship has received.

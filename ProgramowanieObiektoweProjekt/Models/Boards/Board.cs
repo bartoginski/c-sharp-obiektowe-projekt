@@ -1,5 +1,6 @@
 ﻿using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Interfaces;
+using ProgramowanieObiektoweProjekt.Models.Ships;
 using Spectre.Console;
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
@@ -8,8 +9,26 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
     {
         private const int boardSize = 10;
         private Tile[,] tiles = new Tile[boardSize, boardSize];
-        private List<IShip> ships;
+        public List<ShipBase> ships = new List<ShipBase>
+        {
+            new BattleShip(),
+            new Cruiser(),
+            new Cruiser(),
+            new Destroyer(),
+            new Destroyer(),
+            new Destroyer(),
+            new Submarine(),
+            new Submarine(),
+            new Submarine(),
+            new Submarine()
+        };
         
+        
+        public Tile GetTile(int x, int y)
+        {
+            return tiles[x, y];
+        }
+
         public void PlaceShip(IShip ship, int x, int y, Direction direction)
         {
             // code...
