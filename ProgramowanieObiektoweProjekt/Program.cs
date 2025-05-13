@@ -10,14 +10,11 @@ class Program
         var keyControl = new KeyControl(board);
 
         // Ustawianie statków
-        while (true)
+        while (!KeyControl.placementComplete)
         {
-            board.DisplayBoard(true);
+            // Console.Clear();
+            board.DisplayBoard(true, keyControl);
             keyControl.HandleKeyPress();
-
-            // Sprawdź, czy ustawianie statków zostało zakończone
-            if (KeyControl.placementComplete) // Upewnij się, że pole jest publiczne lub dodaj właściwość
-                break;
         }
 
         // Wyświetl planszę po ustawieniu statków

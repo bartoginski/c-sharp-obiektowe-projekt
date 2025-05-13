@@ -68,6 +68,7 @@
             }
         }
 
+        // TODO: fix bug with rotation
         public bool IsShipPreviewTile(int row, int col)
         {
             if (_board.ships[currentShip].IsHorizontal)
@@ -80,7 +81,7 @@
             }
         }
 
-        // Check if tiles aroud are avaiable
+        // Check if tiles around are available
         public bool IsTileAvaiable(int x_coor, int y_coor)
         {
             for (int deltaRow = -1; deltaRow <= 1; deltaRow++)
@@ -191,8 +192,5 @@
                 }
             }
         }
-
-
-
     }
 }
