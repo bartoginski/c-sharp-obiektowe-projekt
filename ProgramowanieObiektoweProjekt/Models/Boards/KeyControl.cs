@@ -73,12 +73,11 @@
         {
             if (_board.ships[currentShip].IsHorizontal)
             {
-                return row == x_coor && col >= y_coor && col < y_coor + _board.ships[currentShip].Length && col < 10;
+                // If ship is horizontal, the row stays fixed (y_coor) and columns vary
+                return row == y_coor && col >= x_coor && col < x_coor + _board.ships[currentShip].Length;
             }
-            else
-            {
-                return col == y_coor && row >= x_coor && row < x_coor + _board.ships[currentShip].Length && row < 10;
-            }
+            // If ship is vertical, the column stays fixed (x_coor) and rows vary
+            return col == x_coor && row >= y_coor && row < y_coor + _board.ships[currentShip].Length;
         }
 
         // Check if tiles around are available
@@ -104,38 +103,43 @@
 
         public bool CanRotateShip()
         {
+            // If ship is currently horizontal and we want to check if it can be vertical
             if (_board.ships[currentShip].IsHorizontal)
             {
-                if (x_coor + _board.ships[currentShip].Length > 10)
-                {
-                    return false;
-                }
-                // Check if there is no ships on the way in the row
-                for (int row = x_coor; row < x_coor + _board.ships[currentShip].Length; row++)
-                {
-                    if (_board.GetTile(row,y_coor).HasShip || !IsTileAvaiable(row, y_coor))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            else
-            {
+                // Check if ship would fit vertically at current position
                 if (y_coor + _board.ships[currentShip].Length > 10)
                 {
                     return false;
                 }
-                // Check if there is no ships on the way in the col
-                for (int col = y_coor; col < y_coor + _board.ships[currentShip].Length; col++)
+        
+                // Check if there are no ships in the way when placed vertically
+                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
                 {
-                    if (_board.GetTile(x_coor,col).HasShip || !IsTileAvaiable(x_coor, col))
+                    if (_board.GetTile(row, x_coor).HasShip || !IsTileAvaiable(row, x_coor))
                     {
                         return false;
                     }
                 }
             }
-
+            // If ship is currently vertical and we want to check if it can be horizontal
+            else
+            {
+                // Check if ship would fit horizontally at current position
+                if (x_coor + _board.ships[currentShip].Length > 10)
+                {
+                    return false;
+                }
+        
+                // Check if there are no ships in the way when placed horizontally
+                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
+                {
+                    if (_board.GetTile(y_coor, col).HasShip || !IsTileAvaiable(y_coor, col))
+                    {
+                        return false;
+                    }
+                }
+            }
+    
             return true;
         }
 
@@ -143,14 +147,16 @@
         {
             if (_board.ships[currentShip].IsHorizontal)
             {
-                if (y_coor + _board.ships[currentShip].Length > 10)
+                // For horizontal ships, check if it fits within the board horizontally
+                if (x_coor + _board.ships[currentShip].Length > 10)
                 {
                     return false;
                 }
-
-                for (int col = y_coor; col < y_coor + _board.ships[currentShip].Length; col++)
+        
+                // Check each column in the horizontal ship's placement
+                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
                 {
-                    if (_board.GetTile(x_coor, col).HasShip || !IsTileAvaiable(x_coor, col))
+                    if (_board.GetTile(y_coor, col).HasShip || !IsTileAvaiable(y_coor, col))
                     {
                         return false;
                     }
@@ -158,20 +164,22 @@
             }
             else
             {
-                if (x_coor + _board.ships[currentShip].Length > 10)
+                // For vertical ships, check if it fits within the board vertically
+                if (y_coor + _board.ships[currentShip].Length > 10)
                 {
                     return false;
                 }
-
-                for (int row = x_coor; row < x_coor + _board.ships[currentShip].Length; row++)
+        
+                // Check each row in the vertical ship's placement
+                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
                 {
-                    if (_board.GetTile(row, y_coor).HasShip || !IsTileAvaiable(row, y_coor))
+                    if (_board.GetTile(row, x_coor).HasShip || !IsTileAvaiable(row, x_coor))
                     {
                         return false;
                     }
                 }
             }
-
+    
             return true;
         }
 
@@ -179,16 +187,18 @@
         {
             if (_board.ships[currentShip].IsHorizontal)
             {
-                for (int col = y_coor; col < y_coor + _board.ships[currentShip].Length; col++)
+                // Place a horizontal ship by setting HasShip to true for each column
+                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
                 {
-                    _board.GetTile(x_coor, col).HasShip = true;
+                    _board.GetTile(y_coor, col).HasShip = true;
                 }
             }
             else
             {
-                for (int row = x_coor; row < x_coor + _board.ships[currentShip].Length; row++)
+                // Place a vertical ship by setting HasShip to true for each row
+                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
                 {
-                    _board.GetTile(row, y_coor).HasShip = true;
+                    _board.GetTile(row, x_coor).HasShip = true;
                 }
             }
         }
