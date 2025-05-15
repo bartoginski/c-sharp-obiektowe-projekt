@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProgramowanieObiektoweProjekt.Enums;
-
+﻿using ProgramowanieObiektoweProjekt.Enums;
+using ProgramowanieObiektoweProjekt.Models.Boards;
 namespace ProgramowanieObiektoweProjekt.Interfaces
 {
     internal interface IBoard
@@ -31,6 +25,7 @@ namespace ProgramowanieObiektoweProjekt.Interfaces
         /// Displays the borad in the terminal.
         /// </summary>
         /// <param name="revealShips">Whether to show ship positions (true) or hide (false)</param>
-        void DisplayBoard(bool revealShips);
+        /// <param name="keyControl">KeyControl instance for showing ship placement preview, or null if not in placement mode</param>
+        void DisplayBoard(bool revealShips, KeyControl keyControl);
     }
 }
