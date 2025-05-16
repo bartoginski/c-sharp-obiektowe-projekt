@@ -3,10 +3,6 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 {
     internal class Menu
     {
-        //1. Start game
-        //2. Games history
-        //3. Autors
-        //4. Exit
         static public void TitleDisplay()
         {
             Console.WriteLine(  "██████╗  █████╗ ████████╗████████╗██╗     ███████╗███████╗██╗  ██╗██╗██████╗\n" +
@@ -22,6 +18,9 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             var choices = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .PageSize(4)
+                    .HighlightStyle(new Style(
+                        background: Color.White,
+                        foreground: Color.Black))
                     .AddChoices(new[] {
                         "Start game", "Games history", "Autors",
                         "Exit",
@@ -35,7 +34,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             {
                 AnsiConsole.WriteLine("You chosed Games history");
             }
-            else if (choices == "Games history")
+            else if (choices == "Autors")
             {
                 AnsiConsole.WriteLine("You chosed Autors");
             }
