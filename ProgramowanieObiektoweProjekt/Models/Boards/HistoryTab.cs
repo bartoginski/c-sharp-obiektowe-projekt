@@ -1,47 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Spectre.Console;
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
     /// <summary>
-    /// A class representing the game history, 
-    /// storing information about shots fired, hits and misses.
+    /// Represents a tab that tracks and displays shot history statistics in the game.
     /// </summary>
     internal class HistoryTab
     {
         /// <summary>
-        /// Number of shots fired.
+        /// Gets the total number of shots fired by the player.
         /// </summary>
         public int ShotsFired { get; private set; }
 
         /// <summary>
-        /// Number of hits.
+        /// Gets the total number of successful hits.
         /// </summary>
         public int Hits { get; private set; }
 
         /// <summary>
-        /// Number of misses (difference between shots fired and hits).
+        /// Gets the total number of missed shots, calculated as the difference
+        /// between total shots fired and successful hits.
         /// </summary>
         public int Misses => ShotsFired - Hits;
 
         /// <summary>
-        /// Registers every shot fired and updates hit and miss statistics.
+        /// Records a new shot in the history and updates statistics.
         /// </summary>
-        /// <param name="wasHit">A logical value specifying whether the shot was a hit (true) or a miss (false).</param>
+        /// <param name="wasHit">True if the shot was a hit, false if it was a miss.</param>
         public void RecordShot(bool wasHit)
         {
-            // code...
+            ShotsFired++;
+            if (wasHit)
+                Hits++;
         }
 
         /// <summary>
-        /// Displays history of shots
+        /// Displays the shot history statistics in the console.
         /// </summary>
         public void DisplayHistoryTab()
         {
-            // code...
+            AnsiConsole.Write(GetHistoryRenderable());
+        }
+
+        /// <summary>
+        /// Creates and returns a formatted table containing shot history statistics.
+        /// </summary>
+        /// <returns>A Spectre.Console Table object with formatted history data.</returns>
+        public Table GetHistoryRenderable()
+        {
+            var table = new Table()
+                .Title("Historia Strzałów")
+                .AddColumns("Łącznie", "Trafienia", "Pudła");
+
+            table.AddRow(ShotsFired.ToString(), Hits.ToString(), Misses.ToString());
+
+            return table;
         }
     }
 }
