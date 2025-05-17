@@ -9,11 +9,11 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
     class BotEasy
     {
         public string Name = "Poziom £atwy";
+        // Initiating random number generation
+        private readonly Random _rand = new Random();
 
         public virtual Tuple<int, int> BotShotSelection()
         {
-            // Initiating random number generation for column
-            var _rand = new Random();
             // Generating random numbers
             int columnnum1 = _rand.Next(1, 10);
             int columnnum2 = _rand.Next(1, 10);
