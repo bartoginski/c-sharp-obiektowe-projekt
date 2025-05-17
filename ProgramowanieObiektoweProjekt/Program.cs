@@ -1,23 +1,21 @@
-﻿namespace ProgramowanieObiektoweProjekt;
-using ProgramowanieObiektoweProjekt.Models.Boards;
+﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 
-class Program
+namespace ProgramowanieObiektoweProjekt
 {
-    static void Main(string[] args)
+    class Program
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
-        var board = new Board();
-        var keyControl = new KeyControl(board);
-
-        // Ustawianie statków
-        while (!KeyControl.placementComplete)
+        static void Main(string[] args)
         {
-            // Console.Clear();
-            board.DisplayBoard(true, keyControl);
-            keyControl.HandleKeyPress();
-        }
 
-        // Wyświetl planszę po ustawieniu statków
-        board.DisplayBoard(false);
+            // Tworzenie plansz i historii
+            var playerBoard = new Board();
+            var enemyBoard = new Board();
+            var history = new HistoryTab();
+
+            // (opcjonalnie: rozmieszczenie statków itd.)
+
+            // Wyświetlenie layoutu z 2 planszami po lewej i historią po prawej2
+            new BoardLayout(playerBoard, enemyBoard, history);
+        }
     }
 }

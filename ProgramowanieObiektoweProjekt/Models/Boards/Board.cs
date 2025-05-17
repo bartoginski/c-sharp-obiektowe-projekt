@@ -47,10 +47,16 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
         public ShotResult Shoot(int x, int y)
         {
+            // TODO: Implement shooting logic
             return ShotResult.Miss;
         }
 
         public void DisplayBoard(bool revealShips, KeyControl keyControl = null)
+        {
+            AnsiConsole.Write(GetBoardRenderable(revealShips));
+        }
+
+        public Table GetBoardRenderable(bool revealShips, KeyControl keyControl = null)
         {
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
@@ -92,7 +98,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
                 board.AddRow(rowData);
             }
-            AnsiConsole.Write(board);
+            return board;
         }
     }
 }
