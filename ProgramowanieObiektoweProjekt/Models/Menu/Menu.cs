@@ -64,6 +64,16 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                 keyControl.HandleKeyPress();
             }
             playersBoard.DisplayBoard(false);
+
+            // Tworzenie plansz i historii
+            //var playerBoard = new Board();
+            var enemyBoard = new Board();
+            var history = new HistoryTab();
+
+            // (opcjonalnie: rozmieszczenie statków itd.)
+
+            // Wyświetlenie layoutu z 2 planszami po lewej i historią po prawej2
+            new BoardLayout(playersBoard, enemyBoard, history);
         }
 
         static public void GamesHistory()
