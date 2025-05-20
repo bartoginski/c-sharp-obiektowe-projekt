@@ -1,61 +1,72 @@
-sing System;
+using System;
 using System.Collections.Generic;
-using ProgramowanieObiektoweProjekt.Models.Boards; 
+using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Models.Ships;
-using ProgramowanieObiektoweProjekt.Enums; 
+using ProgramowanieObiektoweProjekt.Enums;
 
 namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
 {
     class BotEasy
     {
-        public string Name = "Poziom £atwy";
+        public string Name = "Easy";
         // Initiating random number generation
         private readonly Random _rand = new Random();
+        // A list to store previously shot coordinates
+        private readonly List<Tuple<int, int>> _shotsFired = new List<Tuple<int, int>>();
 
         public virtual Tuple<int, int> BotShotSelection()
         {
-            // Generating random numbers
-            int columnnum1 = _rand.Next(1, 10);
-            int columnnum2 = _rand.Next(1, 10);
-            int columnnum3 = _rand.Next(1, 10);
-            int randomIndex = _rand.Next(1, 4);
-            int chosenColumnNumber;
+            Tuple<int, int> shot;
+            do
+            {
+                // Generating random numbers for column
+                int columnnum1 = _rand.Next(1, 10);
+                int columnnum2 = _rand.Next(1, 10);
+                int columnnum3 = _rand.Next(1, 10);
+                int randomIndexCol = _rand.Next(1, 4); // Renamed to avoid duplicate declaration
+                int chosenColumnNumber;
 
-            // Select the number based on the random index
-            if (randomIndex == 1)
-            {
-                chosenColumnNumber = columnnum1;
-            }
-            else if (randomIndex == 2)
-            {
-                chosenColumnNumber = columnnum2;
-            }
-            else
-            {
-                chosenColumnNumber = columnnum3;
-            }
+                // Select the number based on the random index
+                if (randomIndexCol == 1)
+                {
+                    chosenColumnNumber = columnnum1;
+                }
+                else if (randomIndexCol == 2)
+                {
+                    chosenColumnNumber = columnnum2;
+                }
+                else
+                {
+                    chosenColumnNumber = columnnum3;
+                }
 
-            // Generating random numbers
-            int rownum1 = _rand.Next(1, 10);
-            int rownum2 = _rand.Next(1, 10);
-            int rownum3 = _rand.Next(1, 10);
-            int randomIndex = _rand.Next(1, 4);
-            int chosenRowNumber;
+                // Generating random numbers for row
+                int rownum1 = _rand.Next(1, 10);
+                int rownum2 = _rand.Next(1, 10);
+                int rownum3 = _rand.Next(1, 10);
+                int randomIndexRow = _rand.Next(1, 4); // Renamed to avoid duplicate declaration
+                int chosenRowNumber;
 
-            // Select the number based on the random index
-            if (randomIndex == 1)
-            {
-                chosenRowNumber = rownum1;
-            }
-            else if (randomIndex == 2)
-            {
-                chosenRowNumber = rownum2;
-            }
-            else
-            {
-                chosenRowNumber = rownum3;
-            }
-            return Tuple.Create(chosenColumnNumber, chosenRowNumber);
+                // Select the number based on the random index
+                if (randomIndexRow == 1)
+                {
+                    chosenRowNumber = rownum1;
+                }
+                else if (randomIndexRow == 2)
+                {
+                    chosenRowNumber = rownum2;
+                }
+                else
+                {
+                    chosenRowNumber = rownum3;
+                }
+                shot = Tuple.Create(chosenColumnNumber, chosenRowNumber);
+
+            } while (_shotsFired.Contains(shot)); // Keep looping if the shot has already been fired
+
+            // Add the new, unique shot to the list of fired shots
+            _shotsFired.Add(shot);
+            return shot;
         }
 
         public virtual void BotShipPlacement(Board board) // Now takes a Board object as a parameter
@@ -82,7 +93,7 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                     else // Vertical
                     {
                         rowStart = _rand.Next(1, 11 - ship.Length + 1);
-                        colStart = _rand.Next(1, 11);  
+                        colStart = _rand.Next(1, 11);
                     }
 
                     // Check if the placement is valid using the Board's method
