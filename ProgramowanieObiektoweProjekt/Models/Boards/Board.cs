@@ -53,7 +53,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
         public void DisplayBoard(bool revealShips, KeyControl keyControl = null)
         {
-            AnsiConsole.Write(GetBoardRenderable(revealShips));
+            AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl));
         }
 
         public Table GetBoardRenderable(bool revealShips, KeyControl keyControl = null)
@@ -84,7 +84,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     // Check if this is a preview tile
                     if (keyControl != null && !KeyControl.placementComplete && keyControl.IsShipPreviewTile(i, j))
                     {
-                        rowData[j + 1] = "□"; // Use a different symbol for preview
+                        rowData[j + 1] = "O"; // Use a different symbol for preview
                     }
                     // Check if tile exists and has ship
                     else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip)
