@@ -21,9 +21,9 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
             do
             {
                 // Generating random numbers for column
-                int columnnum1 = _rand.Next(1, 10);
-                int columnnum2 = _rand.Next(1, 10);
-                int columnnum3 = _rand.Next(1, 10);
+                int columnnum1 = _rand.Next(1, 11);
+                int columnnum2 = _rand.Next(1, 11);
+                int columnnum3 = _rand.Next(1, 11);
                 int randomIndexCol = _rand.Next(1, 4); // Renamed to avoid duplicate declaration
                 int chosenColumnNumber;
 
@@ -42,9 +42,9 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                 }
 
                 // Generating random numbers for row
-                int rownum1 = _rand.Next(1, 10);
-                int rownum2 = _rand.Next(1, 10);
-                int rownum3 = _rand.Next(1, 10);
+                int rownum1 = _rand.Next(1, 11);
+                int rownum2 = _rand.Next(1, 11);
+                int rownum3 = _rand.Next(1, 11);
                 int randomIndexRow = _rand.Next(1, 4); // Renamed to avoid duplicate declaration
                 int chosenRowNumber;
 
