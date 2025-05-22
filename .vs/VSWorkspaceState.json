@@ -1,8 +1,20 @@
 {
   "ExpandedNodes": [
     "",
+<<<<<<< Updated upstream
     "\\ProgramowanieObiektoweProjekt"
   ],
   "SelectedNode": "\\ProgramowanieObiektoweProjekt.sln",
+=======
+    "\\ProgramowanieObiektoweProjekt",
+    "\\ProgramowanieObiektoweProjekt\\Bot",
+    "\\ProgramowanieObiektoweProjekt\\Enums",
+    "\\ProgramowanieObiektoweProjekt\\Interfaces",
+    "\\ProgramowanieObiektoweProjekt\\Models",
+    "\\ProgramowanieObiektoweProjekt\\Models\\Boards",
+    "\\ProgramowanieObiektoweProjekt\\Models\\Ships"
+  ],
+  "SelectedNode": "\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+>>>>>>> Stashed changes
   "PreviewInSolutionExplorer": false
 }

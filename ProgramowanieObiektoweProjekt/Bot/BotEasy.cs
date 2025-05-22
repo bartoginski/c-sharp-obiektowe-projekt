@@ -9,6 +9,7 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
     class BotEasy
     {
         public string Name = "Easy";
+<<<<<<< Updated upstream
         // Initiating random number generation
         private readonly Random _rand = new Random();
         // A list to store previously shot coordinates
@@ -72,12 +73,45 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
         public virtual void BotShipPlacement(Board board) // Now takes a Board object as a parameter
         {
             List<ShipBase> shipsToPlace = new List<ShipBase>(board.ships); // Use the board's ship list
+=======
+
+        public virtual Tuple<int, int> BotShotSelection()
+        {
+            int row, col;
+            bool shotIsNew = false;
+
+            // Loop until a unique set of coordinates is found
+            while (!shotIsNew)
+            {
+                // Generate random 0-indexed row and column within board boundaries
+                row = _rand.Next(0, BoardSize); // Generates 0 to 9
+                col = _rand.Next(0, BoardSize); // Generates 0 to 9
+
+                // Check if these coordinates have already been shot
+                if (!_shotsMade.Contains((row, col)))
+                {
+                    _shotsMade.Add((row, col)); // Add the new unique shot to the set
+                    shotIsNew = true;           // Mark as new to exit the loop
+                    return Tuple.Create(row, col); // Return the unique coordinates
+                }
+                // If the shot was not new, the loop continues to generate new random coordinates
+            }
+            // This return should theoretically only be hit if all possible board cells are shot,
+            // or if an unforeseen issue occurs.
+            return Tuple.Create(-1, -1);
+        }
+        public virtual void BotShipPlacement(Board board)
+        {
+            // ... (rest of BotShipPlacement method remains the same) ...
+            List<ShipBase> shipsToPlace = new List<ShipBase>(board.ships);
+>>>>>>> Stashed changes
 
             foreach (var ship in shipsToPlace)
             {
                 bool placed = false;
                 while (!placed)
                 {
+<<<<<<< Updated upstream
                     // Randomly choose orientation
                     bool isHorizontal = _rand.Next(2) == 0;
                     Direction orientation = isHorizontal ? Direction.Horizontal : Direction.Vertical;
@@ -103,6 +137,30 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                         placed = true;
                     }
                 }
+=======
+                    bool isHorizontal = _rand.Next(2) == 0;
+                    Direction orientation = isHorizontal ? Direction.Horizontal : Direction.Vertical;
+
+                    int rowStart, colStart;
+
+                    if (isHorizontal)
+                    {
+                        colStart = _rand.Next(0, BoardSize - ship.Length + 1);
+                        rowStart = _rand.Next(0, BoardSize);
+                    }
+                    else
+                    {
+                        rowStart = _rand.Next(0, BoardSize - ship.Length + 1);
+                        colStart = _rand.Next(0, BoardSize);
+                    }
+
+                    if (board.TryPlaceShip(ship, rowStart, colStart, orientation))
+                    {
+                        placed = true;
+                    }
+                }
+
+>>>>>>> Stashed changes
             }
         }
     }

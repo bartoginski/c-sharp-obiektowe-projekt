@@ -3,6 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\",
   "Documents": [
     {
+<<<<<<< Updated upstream
+=======
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Enums\\Direction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Enums\\Direction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+>>>>>>> Stashed changes
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ProgramowanieObiektoweProjekt\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -23,6 +57,107 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+<<<<<<< Updated upstream
+=======
+              "Title": "BotEasy.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAABQAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T17:11:49.596Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "KeyControl.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\KeyControl.cs",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAL8AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T16:52:29.424Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Direction.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Enums\\Direction.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Enums\\Direction.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Enums\\Direction.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Enums\\Direction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T20:43:32.954Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Ships.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Ships\\Ships.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T20:08:59.551Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IShip.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Interfaces\\IShip.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T20:07:48.572Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Tile.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Tile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T19:23:33.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Board.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAGMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T19:23:15.434Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ShipBase.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs",
+              "ToolTip": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Ships\\ShipBase.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAACYAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-17T18:52:24.948Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+>>>>>>> Stashed changes
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\barto\\source\\repos\\bartoginski\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Program.cs",
               "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Program.cs",
@@ -30,8 +165,12 @@
               "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+<<<<<<< Updated upstream
               "WhenOpened": "2025-05-15T21:07:56.539Z",
               "EditorCaption": ""
+=======
+              "WhenOpened": "2025-05-15T21:07:56.539Z"
+>>>>>>> Stashed changes
             }
           ]
         }
