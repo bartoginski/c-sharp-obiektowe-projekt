@@ -1,14 +1,23 @@
+<<<<<<< Updated upstream
 using System;
 using System.Collections.Generic;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Enums;
+=======
+sing System;
+using System.Collections.Generic;
+using ProgramowanieObiektoweProjekt.Models.Boards; 
+using ProgramowanieObiektoweProjekt.Models.Ships;
+using ProgramowanieObiektoweProjekt.Enums; 
+>>>>>>> Stashed changes
 
 namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
 {
     class BotEasy
     {
         public string Name = "Easy";
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         // Initiating random number generation
         private readonly Random _rand = new Random();
@@ -74,6 +83,8 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
         {
             List<ShipBase> shipsToPlace = new List<ShipBase>(board.ships); // Use the board's ship list
 =======
+=======
+>>>>>>> Stashed changes
 
         public virtual Tuple<int, int> BotShotSelection()
         {
@@ -104,6 +115,9 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
         {
             // ... (rest of BotShipPlacement method remains the same) ...
             List<ShipBase> shipsToPlace = new List<ShipBase>(board.ships);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
             foreach (var ship in shipsToPlace)
@@ -111,6 +125,7 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                 bool placed = false;
                 while (!placed)
                 {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                     // Randomly choose orientation
                     bool isHorizontal = _rand.Next(2) == 0;
@@ -138,6 +153,8 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                     }
                 }
 =======
+=======
+>>>>>>> Stashed changes
                     bool isHorizontal = _rand.Next(2) == 0;
                     Direction orientation = isHorizontal ? Direction.Horizontal : Direction.Vertical;
 
@@ -160,6 +177,9 @@ namespace ProgramowanieObiektoweProjekt.Bot.BotEasy
                     }
                 }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             }
         }
