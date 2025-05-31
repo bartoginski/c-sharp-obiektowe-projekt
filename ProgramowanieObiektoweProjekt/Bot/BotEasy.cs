@@ -1,5 +1,8 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
+using System;
+using System.Collections.Generic;
+using System.Linq; // Added for .Any()
 
 public class BotEasy : IBot
 {
@@ -60,20 +63,24 @@ public class BotEasy : IBot
                 Direction dir = _rand.Next(2) == 0 ? Direction.Horizontal : Direction.Vertical;
                 ship.IsHorizontal = (dir == Direction.Horizontal); // Update ship's IsHorizontal property
 
-                int x, y; // x for column, y for row
+                int x, y; // x for column (horizontal position), y for row (vertical position)
 
                 if (dir == Direction.Horizontal)
                 {
-                    x = _rand.Next(0, BoardSize - ship.Length + 1);
+                    x = _rand.Next(0, BoardSize - ship.Length + 1); // X (column) can be placed such that the whole ship fits horizontally
                     y = _rand.Next(0, BoardSize); // Y (row) can be anywhere
                 }
                 else // Vertical
                 {
                     x = _rand.Next(0, BoardSize); // X (column) can be anywhere
-                    y = _rand.Next(0, BoardSize - ship.Length + 1);
+                    y = _rand.Next(0, BoardSize - ship.Length + 1); // Y (row) can be placed such that the whole ship fits vertically
                 }
 
-                placed = board.TryPlaceShip(ship, x, y, dir);
+                if (board.IsValidPlacement(ship, x, y, dir))
+                {
+                    board.PlaceShip(ship, x, y, dir);
+                    placed = true;
+                }
             }
         }
     }

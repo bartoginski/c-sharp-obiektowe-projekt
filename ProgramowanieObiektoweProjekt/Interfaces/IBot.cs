@@ -1,15 +1,10 @@
-using System;
-using ProgramowanieObiektoweProjekt.Models.Boards;
-using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Enums;
+using ProgramowanieObiektoweProjekt.Models.Boards;
 
-namespace ProgramowanieObiektoweProjekt.Interfaces
+public interface IBot
 {
-    internal interface IBot
-    {
-        string Name { get; }
-        Tuple<int, int> BotShotSelection();
-        void BotShipPlacement(Board board);
-        void InformShotResult(Tuple<int, int> shotCoordinates, ShotResult result);
-    }
+    string Name { get; }
+    Tuple<int, int> BotShotSelection();
+    void BotShipPlacement(Board board);
+    void InformShotResult(Tuple<int, int> shotCoordinates, ShotResult result);
 }

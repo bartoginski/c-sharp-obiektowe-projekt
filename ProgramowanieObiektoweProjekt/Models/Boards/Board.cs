@@ -2,8 +2,8 @@
 using ProgramowanieObiektoweProjekt.Interfaces;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using Spectre.Console;
-using System;
-using System.Linq;
+using System.Collections.Generic; // Added for List
+using System.Linq; // Added for Enumerable.Range
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
@@ -36,102 +36,43 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
         }
 
+
         public Tile GetTile(int x, int y)
         {
             return tiles[x, y];
         }
 
+        // Implementation of PlaceShip
         public void PlaceShip(IShip ship, int x, int y, Direction direction)
         {
             if (direction == Direction.Horizontal)
             {
-                for (int i = 0; i < ship.Length; i++)
+                for (int col = x; col < x + ship.Length; col++)
                 {
-                    tiles[y, x + i].HasShip = true;
-                    tiles[y, x + i].ShipReference = ship;
+                    tiles[y, col].HasShip = true;
                 }
             }
-            else
+            else // Vertical
             {
-                for (int i = 0; i < ship.Length; i++)
+                for (int row = y; row < y + ship.Length; row++)
                 {
-                    tiles[y + i, x].HasShip = true;
-                    tiles[y + i, x].ShipReference = ship;
+                    tiles[row, x].HasShip = true;
                 }
             }
         }
-
-        public bool TryPlaceShip(IShip ship, int x, int y, Direction direction)
-        {
-            if (direction == Direction.Horizontal)
-            {
-                if (x < 0 || x + ship.Length > boardSize || y < 0 || y >= boardSize)
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                if (y < 0 || y + ship.Length > boardSize || x < 0 || x >= boardSize)
-                {
-                    return false;
-                }
-            }
-
-            
-            int startRow = y;
-            int endRow = direction == Direction.Vertical ? y + ship.Length - 1 : y;
-            int startCol = x;
-            int endCol = direction == Direction.Horizontal ? x + ship.Length - 1 : x;
-
-            for (int r = startRow - 1; r <= endRow + 1; r++)
-            {
-                for (int c = startCol - 1; c <= endCol + 1; c++)
-                {
-                    if (r >= 0 && r < boardSize && c >= 0 && c < boardSize)
-                    {
-                        if (tiles[r, c].HasShip)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            PlaceShip(ship, x, y, direction);
-            return true;
-        }
-
 
         public ShotResult Shoot(int x, int y)
         {
-            if (x < 0 || x >= boardSize || y < 0 || y >= boardSize)
-            {
-                return ShotResult.Miss;
-            }
-
-            Tile targetTile = tiles[y, x];
-
-            if (targetTile.IsHit)
-            {
-                return ShotResult.Miss;
-            }
-
-            targetTile.IsHit = true;
-
-            if (targetTile.HasShip)
-            {
-                targetTile.ShipReference.TakeHit();
-                if (targetTile.ShipReference.IsSunk())
-                {
-                    return ShotResult.Sunk;
-                }
-                return ShotResult.Hit;
-            }
+            // TODO: Implement shooting logic
             return ShotResult.Miss;
         }
 
         public void DisplayBoard(bool revealShips, KeyControl keyControl = null)
+        {
+            AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl));
+        }
+
+        public Table GetBoardRenderable(bool revealShips, KeyControl keyControl = null)
         {
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
@@ -142,6 +83,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 .Border(TableBorder.Rounded)
                 .Expand()
                 .ShowRowSeparators();
+            // Add the empty corner cell
             board.AddColumn(new TableColumn(""));
             foreach (var header in columnHeaders)
             {
@@ -149,35 +91,97 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
             for (int i = 0; i < boardSize; i++)
             {
+                // Index column + 10 game columns == 11 columns in each row
                 var rowData = new string[boardSize + 1];
+                // Add index to first cell in each row
                 rowData[0] = rowHeaders[i];
-
                 for (int j = 0; j < boardSize; j++)
                 {
-                    if (keyControl != null && keyControl.IsShipPreviewTile(i, j) && !keyControl.placementComplete)
+                    // Check if this is a preview tile
+                    if (keyControl != null && !KeyControl.placementComplete && keyControl.IsShipPreviewTile(i, j))
                     {
-                        rowData[j + 1] = "[yellow]S[/]";
+                        rowData[j + 1] = "O"; // Use a different symbol for preview
                     }
-                    else if (tiles[i, j].IsHit && tiles[i, j].HasShip)
+                    // Check if tile exists and has ship
+                    else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip)
                     {
-                        rowData[j + 1] = "[red]X[/]";
-                    }
-                    else if (tiles[i, j].IsHit && !tiles[i, j].HasShip)
-                    {
-                        rowData[j + 1] = "[blue]O[/]";
-                    }
-                    else if (revealShips && tiles[i, j].HasShip)
-                    {
-                        rowData[j + 1] = "[green]#[/]";
+                        rowData[j + 1] = "■";
                     }
                     else
                     {
-                        rowData[j + 1] = " ";
+                        rowData[j + 1] = "~";
                     }
                 }
                 board.AddRow(rowData);
             }
-            AnsiConsole.Write(board);
+            return board;
+        }
+
+        public bool IsValidPlacement(IShip ship, int startX, int startY, Direction direction) // Renamed parameters to match x, y (col, row)
+        {
+            bool IsSpaceAvailableAroundTile(int row, int col)
+            {
+                if (row < 0 || row >= boardSize || col < 0 || col >= boardSize)
+                    return false; // Out of bounds check is actually handled by the main loop
+
+                if (GetTile(row, col).HasShip)
+                    return false; // Tile already has a ship
+
+                // Check 8 surrounding tiles
+                for (int deltaRow = -1; deltaRow <= 1; deltaRow++)
+                {
+                    for (int deltaCol = -1; deltaCol <= 1; deltaCol++)
+                    {
+                        int neighborRow = row + deltaRow;
+                        int neighborCol = col + deltaCol;
+
+                        if (neighborRow >= 0 && neighborRow < boardSize &&
+                            neighborCol >= 0 && neighborCol < boardSize &&
+                            GetTile(neighborRow, neighborCol).HasShip)
+                        {
+                            return false; // Adjacent tile has a ship
+                        }
+                    }
+                }
+                return true;
+            }
+
+            if (direction == Direction.Horizontal)
+            {
+                // Check if ship fits horizontally within the board boundaries
+                if (startX + ship.Length > boardSize)
+                {
+                    return false;
+                }
+
+                // Check each tile for availability before placing
+                for (int col = startX; col < startX + ship.Length; col++)
+                {
+                    if (!IsSpaceAvailableAroundTile(startY, col))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else // Vertical
+            {
+                // Check if ship fits vertically within the board boundaries
+                if (startY + ship.Length > boardSize)
+                {
+                    return false;
+                }
+
+                // Check each tile for availability before placing
+                for (int row = startY; row < startY + ship.Length; row++)
+                {
+                    if (!IsSpaceAvailableAroundTile(row, startX))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true; // Placement is valid
         }
     }
 }
