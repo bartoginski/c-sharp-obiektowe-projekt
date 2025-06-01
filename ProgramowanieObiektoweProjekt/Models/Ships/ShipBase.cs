@@ -11,7 +11,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Ships
     /// Abstract base class for ships.
     /// Contains common properties and methods for different ship types.
     /// </summary>
-    abstract class ShipBase : IShip
+    public abstract class ShipBase : IShip
     {
         public string Name { get; protected set; }
         public int Length { get; protected set; }

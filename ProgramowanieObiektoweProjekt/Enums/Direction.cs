@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProgramowanieObiektoweProjekt.Enums
 {
-    internal enum Direction
+    public enum Direction
     {
         Horizontal,
         Vertical

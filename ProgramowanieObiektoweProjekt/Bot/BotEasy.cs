@@ -1,6 +1,9 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 internal class BotEasy : IBot
 {
@@ -12,6 +15,7 @@ internal class BotEasy : IBot
     protected List<(int x, int y)> _hits = new();
 
     public virtual string Name => "Easy";
+
     public virtual Tuple<int, int> BotShotSelection()
     {
         if (_huntingMode && _huntQueue.Any())
@@ -21,7 +25,7 @@ internal class BotEasy : IBot
                 var target = _huntQueue.Dequeue();
                 if (!_shotsMade.Contains(target))
                 {
-                    _shotsMade.Add(target); // Add to shotsMade only if it's a new shot
+                    _shotsMade.Add(target);
                     return Tuple.Create(target.x, target.y);
                 }
             }
@@ -40,8 +44,8 @@ internal class BotEasy : IBot
 
         while (true)
         {
-            int x = _rand.Next(0, BoardSize); // X is column
-            int y = _rand.Next(0, BoardSize); // Y is row
+            int x = _rand.Next(0, BoardSize);
+            int y = _rand.Next(0, BoardSize);
 
             if (!_shotsMade.Contains((x, y)))
             {
@@ -59,19 +63,19 @@ internal class BotEasy : IBot
             while (!placed)
             {
                 Direction dir = _rand.Next(2) == 0 ? Direction.Horizontal : Direction.Vertical;
-                ship.IsHorizontal = (dir == Direction.Horizontal); // Update ship's IsHorizontal property
+                ship.IsHorizontal = (dir == Direction.Horizontal);
 
-                int x, y; // x for column (horizontal position), y for row (vertical position)
+                int x, y;
 
                 if (dir == Direction.Horizontal)
                 {
-                    x = _rand.Next(0, BoardSize - ship.Length + 1); // X (column) can be placed such that the whole ship fits horizontally
-                    y = _rand.Next(0, BoardSize); // Y (row) can be anywhere
+                    x = _rand.Next(0, BoardSize - ship.Length + 1);
+                    y = _rand.Next(0, BoardSize);
                 }
-                else // Vertical
+                else
                 {
-                    x = _rand.Next(0, BoardSize); // X (column) can be anywhere
-                    y = _rand.Next(0, BoardSize - ship.Length + 1); // Y (row) can be placed such that the whole ship fits vertically
+                    x = _rand.Next(0, BoardSize);
+                    y = _rand.Next(0, BoardSize - ship.Length + 1);
                 }
 
                 if (board.IsValidPlacement(ship, x, y, dir))
@@ -85,12 +89,11 @@ internal class BotEasy : IBot
 
     public virtual void InformShotResult(Tuple<int, int> coord, ShotResult result)
     {
-
         if (result == ShotResult.Hit)
         {
             _huntingMode = true;
-            _hits.Add((coord.Item1, coord.Item2)); // Store the hit coordinate
-            EnqueueAdjacent((coord.Item1, coord.Item2)); // Enqueue adjacent cells to hunt
+            _hits.Add((coord.Item1, coord.Item2));
+            EnqueueAdjacent((coord.Item1, coord.Item2));
         }
         else if (result == ShotResult.Sunk)
         {
@@ -107,15 +110,15 @@ internal class BotEasy : IBot
 
         var adj = new List<(int x, int y)>
         {
-            (col, row - 1), // Up
-            (col, row + 1), // Down
-            (col - 1, row), // Left
-            (col + 1, row)  // Right
+            (col, row - 1),
+            (col, row + 1),
+            (col - 1, row),
+            (col + 1, row)
         };
 
         foreach (var t in adj)
         {
-            if (IsInBounds(t) && !_shotsMade.Contains(t) && !_huntQueue.Contains(t)) // Also check if already in queue to prevent duplicates
+            if (IsInBounds(t) && !_shotsMade.Contains(t) && !_huntQueue.Contains(t))
             {
                 _huntQueue.Enqueue(t);
             }
@@ -124,10 +127,10 @@ internal class BotEasy : IBot
 
     protected void RePopulateHuntQueueFromHits()
     {
-        _huntQueue.Clear(); // Clear existing queue before repopulating
+        _huntQueue.Clear();
         foreach (var h in _hits)
         {
-            EnqueueAdjacent(h); // Re-add adjacent cells for all current hits
+            EnqueueAdjacent(h);
         }
     }
 
@@ -135,5 +138,14 @@ internal class BotEasy : IBot
     {
         return coord.x >= 0 && coord.x < BoardSize &&
                coord.y >= 0 && coord.y < BoardSize;
+    }
+
+    // CHANGED: Bot shooting now interacts with Board and uses IsHit via Board.Shoot
+    public virtual ShotResult BotShoot(Board board)
+    {
+        var target = BotShotSelection();
+        ShotResult result = board.Shoot(target.Item1, target.Item2);
+        InformShotResult(target, result);
+        return result;
     }
 }

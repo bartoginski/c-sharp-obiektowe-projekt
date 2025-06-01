@@ -1,6 +1,6 @@
 ﻿namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
-    internal class KeyControl
+    public class KeyControl
     {
         private readonly Board _board;
 

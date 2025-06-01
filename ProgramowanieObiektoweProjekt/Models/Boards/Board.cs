@@ -4,10 +4,9 @@ using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Utils;
 using Spectre.Console;
 
-
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
-    internal class Board : IBoard
+    public class Board
     {
         private const int boardSize = Constants.BoardSize;
         private Tile[,] tiles = new Tile[boardSize, boardSize];
@@ -36,7 +35,6 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
         }
 
-
         public Tile GetTile(int x, int y)
         {
             return tiles[x, y];
@@ -61,9 +59,21 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
         }
 
+        // CHANGED: Implement shooting logic using Tile.IsHit and Tile.HasShip
         public ShotResult Shoot(int x, int y)
         {
-            // TODO: Implement shooting logic
+            var tile = GetTile(y, x); // y=row, x=column (matches rest of code)
+            if (tile.IsHit)
+            {
+                // Already shot here; you might want to handle this differently
+                return ShotResult.Miss;
+            }
+            tile.IsHit = true;
+            if (tile.HasShip)
+            {
+                // (Optional) TODO: Add logic to check if a ship is sunk
+                return ShotResult.Hit;
+            }
             return ShotResult.Miss;
         }
 
@@ -77,7 +87,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
                 .ToArray();
-            string[] rowHeaders = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+            string[] rowHeaders = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 
             var board = new Table()
                 .Border(TableBorder.Rounded)
@@ -89,25 +99,21 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             {
                 board.AddColumn(new TableColumn(header).Centered());
             }
-            
+
             for (int i = 0; i < boardSize; i++)
             {
-                // Index column + 10 game columns == 11 columns in each row
                 var rowData = new string[boardSize + 1];
-                // Add index to first cell in each row
                 rowData[0] = rowHeaders[i];
                 for (int j = 0; j < boardSize; j++)
                 {
-                    // TODO: handle shoots 
-                    // Check if this is a preview tile
+                    // TODO: handle shoots
                     if (keyControl != null && !KeyControl.placementComplete && keyControl.IsShipPreviewTile(i, j))
                     {
-                        rowData[j + 1] = "O"; // Use a different symbol for preview
+                        rowData[j + 1] = "O";
                     }
-                    // Check if tile exists and has ship and isn't hidden
                     else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip && revealShips)
                     {
-                        rowData[j + 1] = "■";
+                        rowData[j + 1] = "\u25a0";
                     }
                     else
                     {
@@ -119,17 +125,16 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             return board;
         }
 
-        public bool IsValidPlacement(IShip ship, int startX, int startY, Direction direction) // Renamed parameters to match x, y (col, row)
+        public bool IsValidPlacement(IShip ship, int startX, int startY, Direction direction)
         {
             bool IsSpaceAvailableAroundTile(int row, int col)
             {
                 if (row < 0 || row >= boardSize || col < 0 || col >= boardSize)
-                    return false; // Out of bounds check is actually handled by the main loop
+                    return false;
 
                 if (GetTile(row, col).HasShip)
-                    return false; // Tile already has a ship
+                    return false;
 
-                // Check 8 surrounding tiles
                 for (int deltaRow = -1; deltaRow <= 1; deltaRow++)
                 {
                     for (int deltaCol = -1; deltaCol <= 1; deltaCol++)
@@ -141,7 +146,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                             neighborCol >= 0 && neighborCol < boardSize &&
                             GetTile(neighborRow, neighborCol).HasShip)
                         {
-                            return false; // Adjacent tile has a ship
+                            return false;
                         }
                     }
                 }
@@ -150,13 +155,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
             if (direction == Direction.Horizontal)
             {
-                // Check if ship fits horizontally within the board boundaries
                 if (startX + ship.Length > boardSize)
                 {
                     return false;
                 }
 
-                // Check each tile for availability before placing
                 for (int col = startX; col < startX + ship.Length; col++)
                 {
                     if (!IsSpaceAvailableAroundTile(startY, col))
@@ -167,13 +170,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
             else // Vertical
             {
-                // Check if ship fits vertically within the board boundaries
                 if (startY + ship.Length > boardSize)
                 {
                     return false;
                 }
 
-                // Check each tile for availability before placing
                 for (int row = startY; row < startY + ship.Length; row++)
                 {
                     if (!IsSpaceAvailableAroundTile(row, startX))
@@ -183,7 +184,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
             }
 
-            return true; // Placement is valid
+            return true;
         }
     }
 }
