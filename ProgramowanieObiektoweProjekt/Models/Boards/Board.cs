@@ -67,12 +67,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             return ShotResult.Miss;
         }
 
-        public void DisplayBoard(bool revealShips = true, KeyControl keyControl = null)
+        public void DisplayBoard(bool revealShips = true, KeyControl? keyControl = null)
         {
             AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl));
         }
 
-        public Table GetBoardRenderable(bool revealShips, KeyControl keyControl = null)
+        public Table GetBoardRenderable(bool revealShips, KeyControl? keyControl = null)
         {
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
@@ -89,6 +89,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             {
                 board.AddColumn(new TableColumn(header).Centered());
             }
+            
             for (int i = 0; i < boardSize; i++)
             {
                 // Index column + 10 game columns == 11 columns in each row

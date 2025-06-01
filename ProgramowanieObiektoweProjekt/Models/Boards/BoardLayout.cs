@@ -1,6 +1,7 @@
 ﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 using Spectre.Console;
 using System;
+using ProgramowanieObiektoweProjekt.Utils;
 
 internal class BoardLayout
 {
@@ -41,7 +42,7 @@ internal class BoardLayout
             .Border(BoxBorder.Rounded)
             .Expand());
 
-        layout["EnemyBoard"].Update(new Panel(enemyBoard.GetBoardRenderable(false))
+        layout["EnemyBoard"].Update(new Panel(enemyBoard.GetBoardRenderable(Constants.DevMode))
             .Header("Plansza przeciwnika")
             .Border(BoxBorder.Rounded)
             .Expand());

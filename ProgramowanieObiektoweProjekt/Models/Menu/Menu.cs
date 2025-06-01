@@ -72,7 +72,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             playersBoard.DisplayBoard();
             // Show board only when DevMode is on
-            computersBoard.DisplayBoard(Constants.DevMode);
+            computersBoard.DisplayBoard();
 
             // Tworzenie plansz i historii
             //var playerBoard = new Board();
