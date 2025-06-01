@@ -1,6 +1,6 @@
-
-﻿using ProgramowanieObiektoweProjekt.Models.Player;
+using ProgramowanieObiektoweProjekt.Models.Player;
 using ProgramowanieObiektoweProjekt.Models.Boards;
+using ProgramowanieObiektoweProjekt.Utils;
 using Spectre.Console;
 
 namespace ProgramowanieObiektoweProjekt.Models.Menu
@@ -55,7 +55,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             Console.Clear();
             //Console.OutputEncoding = System.Text.Encoding.UTF8;
             Board playersBoard = new Board();
+            Board computersBoard = new Board();
+            // Define variable by interface
+            IBot bot = new BotEasy();
             RealPlayer Player1 = new RealPlayer("Gracz 1", playersBoard);
+            CompPlayer Player2 = new CompPlayer("Gracz 2", computersBoard);
             var keyControl = new KeyControl(playersBoard);
 
             while (!KeyControl.placementComplete)
@@ -64,17 +68,20 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                 playersBoard.DisplayBoard(true, keyControl);
                 keyControl.HandleKeyPress();
             }
-            playersBoard.DisplayBoard(false);
+            bot.BotShipPlacement(computersBoard);
+
+            playersBoard.DisplayBoard();
+            // Show board only when DevMode is on
+            computersBoard.DisplayBoard(Constants.DevMode);
 
             // Tworzenie plansz i historii
             //var playerBoard = new Board();
-            var enemyBoard = new Board();
             var history = new HistoryTab();
 
             // (opcjonalnie: rozmieszczenie statków itd.)
 
             // Wyświetlenie layoutu z 2 planszami po lewej i historią po prawej2
-            new BoardLayout(playersBoard, enemyBoard, history);
+            new BoardLayout(playersBoard, computersBoard, history);
         }
 
         static public void GamesHistory()

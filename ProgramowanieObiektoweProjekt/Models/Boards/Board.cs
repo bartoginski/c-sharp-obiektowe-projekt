@@ -1,15 +1,15 @@
 ﻿using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Interfaces;
 using ProgramowanieObiektoweProjekt.Models.Ships;
+using ProgramowanieObiektoweProjekt.Utils;
 using Spectre.Console;
-using System.Collections.Generic; // Added for List
-using System.Linq; // Added for Enumerable.Range
+
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
     internal class Board : IBoard
     {
-        private const int boardSize = 10;
+        private const int boardSize = Constants.BoardSize;
         private Tile[,] tiles = new Tile[boardSize, boardSize];
         public List<ShipBase> ships = new List<ShipBase>
         {
@@ -67,7 +67,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             return ShotResult.Miss;
         }
 
-        public void DisplayBoard(bool revealShips, KeyControl keyControl = null)
+        public void DisplayBoard(bool revealShips = true, KeyControl keyControl = null)
         {
             AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl));
         }
@@ -97,13 +97,14 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 rowData[0] = rowHeaders[i];
                 for (int j = 0; j < boardSize; j++)
                 {
+                    // TODO: handle shoots 
                     // Check if this is a preview tile
                     if (keyControl != null && !KeyControl.placementComplete && keyControl.IsShipPreviewTile(i, j))
                     {
                         rowData[j + 1] = "O"; // Use a different symbol for preview
                     }
-                    // Check if tile exists and has ship
-                    else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip)
+                    // Check if tile exists and has ship and isn't hidden
+                    else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip && revealShips)
                     {
                         rowData[j + 1] = "■";
                     }

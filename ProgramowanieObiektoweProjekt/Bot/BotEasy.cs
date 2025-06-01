@@ -1,12 +1,10 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
-using System;
-using System.Collections.Generic;
-using System.Linq; // Added for .Any()
+using ProgramowanieObiektoweProjekt.Utils;
 
 internal class BotEasy : IBot
 {
-    protected const int BoardSize = 10;
+    protected const int BoardSize = Constants.BoardSize;
     protected Random _rand = new();
     protected List<(int x, int y)> _shotsMade = new();
     protected Queue<(int x, int y)> _huntQueue = new();
