@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ProgramowanieObiektoweProjekt": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "sqlDebugging": false,
+      "jsWebView2Debugging": false
+    }
+  }
+}
