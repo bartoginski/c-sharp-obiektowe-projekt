@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq; // Added for .Any()
 
-public class BotEasy : IBot
+internal class BotEasy : IBot
 {
     protected const int BoardSize = 10;
     protected Random _rand = new();

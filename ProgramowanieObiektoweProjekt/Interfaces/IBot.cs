@@ -1,7 +1,7 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 
-public interface IBot
+internal interface IBot
 {
     string Name { get; }
     Tuple<int, int> BotShotSelection();
