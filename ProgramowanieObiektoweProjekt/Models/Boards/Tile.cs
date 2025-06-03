@@ -1,7 +1,13 @@
-namespace ProgramowanieObiektoweProjekt.Models.Boards;
-    
-class Tile
+using ProgramowanieObiektoweProjekt.Models.Ships; // Potrzebne dla ShipBase
+
+namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
-    public bool HasShip { get; set; }
-    public bool IsHit { get; set; }
+    internal class Tile
+    {
+        public ShipBase? OccupyingShip { get; set; } = null; // Statek zajmujący to pole, null jeśli brak
+        public bool IsHit { get; set; } = false; // Czy pole zostało trafione
+
+        // Właściwość pomocnicza, jeśli HasShip jest często używane w innych częściach kodu
+        public bool HasShip => OccupyingShip != null;
+    }
 }

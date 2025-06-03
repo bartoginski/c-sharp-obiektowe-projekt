@@ -1,4 +1,5 @@
-﻿using ProgramowanieObiektoweProjekt.Interfaces;
+﻿using ProgramowanieObiektoweProjekt.Enums; // Potrzebne dla Direction
+using ProgramowanieObiektoweProjekt.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,34 +8,43 @@ using System.Threading.Tasks;
 
 namespace ProgramowanieObiektoweProjekt.Models.Ships
 {
-    /// <summary>
-    /// Abstract base class for ships.
-    /// Contains common properties and methods for different ship types.
-    /// </summary>
     abstract class ShipBase : IShip
     {
         public string Name { get; protected set; }
         public int Length { get; protected set; }
-        public int NumberOfShips { get; protected set; }
+        public int NumberOfShips { get; protected set; } // Ta właściwość jest bardziej statyczna dla typu statku
 
-        public bool IsHorizontal = true;
+        public bool IsHorizontal { get; set; } = true; // Używane w KeyControl i BotEasy
 
-        /// <summary>
-        /// The number of hits the ship has received.
-        /// </summary>
         protected int Hits;
-
-        /// <summary>
-        /// Indicates whether the ship was sunk (hit in all segments).
-        /// </summary>
         public bool IsSunk => Hits >= Length;
 
-        /// <summary>
-        /// Records a ship hit, incrementing the hit counter.
-        /// </summary>
+        // Nowe właściwości do śledzenia pozycji statku
+        public int StartCol { get; set; }
+        public int StartRow { get; set; }
+        // Usunięto ShipDirection, ponieważ IsHorizontal już to pokrywa i jest używane
+        // public Direction ShipDirection { get; set; } 
+        public List<(int col, int row)> OccupiedTilesList { get; private set; } = new List<(int, int)>();
+
         public virtual void Hit()
         {
-            Hits++;
+            if (!IsSunk) // Zliczaj trafienia tylko jeśli statek nie jest jeszcze zatopiony
+            {
+                Hits++;
+            }
+        }
+
+        public void AddOccupiedTile(int col, int row)
+        {
+            if (!OccupiedTilesList.Contains((col, row))) // Unikaj duplikatów, choć nie powinno ich być
+            {
+                OccupiedTilesList.Add((col, row));
+            }
+        }
+
+        public void ClearOccupiedTiles()
+        {
+            OccupiedTilesList.Clear();
         }
     }
 }
