@@ -14,6 +14,10 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 {
     internal class Menu
     {
+        // Zmienne do śledzenia pozycji kursora gracza podczas strzelania
+        static private int playerShotCursorX = 0;
+        static private int playerShotCursorY = 0;
+
         static public void TitleDisplay()
         {
             Console.WriteLine("  ██████╗  █████╗ ████████╗████████╗██╗      ███████╗███████╗██╗  ██╗██╗██████╗\n" +
@@ -56,6 +60,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             }
         }
 
+        // Metoda ParseCoordinates nie jest już potrzebna dla strzału gracza, ale może być przydatna gdzie indziej
         private static Tuple<int, int> ParseCoordinates(string input)
         {
             if (string.IsNullOrWhiteSpace(input) || input.Length < 2 || input.Length > 3)
@@ -73,57 +78,18 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
         private static string FormatCoordinate(int col, int row) // col_idx_0, row_idx_0
         {
+            if (col < 0 || col >= Constants.BoardSize || row < 0 || row >= Constants.BoardSize) return "N/A";
             return $"{(char)('A' + row)}{col + 1}";
         }
 
-        private static Tuple<int, int> GetPlayerShotCoordinates(Board opponentBoard, string playerName)
-        {
-            while (true)
-            {
-                AnsiConsole.MarkupLine($"\n[bold]{playerName}[/], podaj koordynaty strzału (np. A5):");
-                string? input = Console.ReadLine();
-                try
-                {
-                    if (string.IsNullOrEmpty(input)) throw new ArgumentException("Wejście nie może być puste.");
-                    
-                    var (col, row) = ParseCoordinates(input); // Może rzucić ArgumentException
-
-                    // GetTile może rzucić ArgumentOutOfRangeException, jeśli koordynaty są poza zakresem
-                    // po poprawnym sparsowaniu (np. jeśli Constants.BoardSize byłoby dynamiczne
-                    // i ParseCoordinates by tego nie uwzględniło idealnie).
-                    // W praktyce, ParseCoordinates powinno już to wyłapać.
-                    Tile targetTile = opponentBoard.GetTile(row, col); 
-
-                    if (targetTile.IsHit)
-                    {
-                        AnsiConsole.MarkupLine("[yellow]To pole już zostało ostrzelane. Spróbuj ponownie.[/]");
-                        continue;
-                    }
-                    return Tuple.Create(col, row);
-                }
-                // === POCZĄTEK POPRAWIONEJ KOLEJNOŚCI CATCH ===
-                catch (ArgumentOutOfRangeException ex) // Najpierw bardziej szczegółowy typ wyjątku
-                {
-                    AnsiConsole.MarkupLine($"[red]Błąd (Koordynaty poza planszą): {ex.Message} Spróbuj ponownie.[/]");
-                }
-                catch (ArgumentException ex) // Potem bardziej ogólny ArgumentException
-                {
-                    AnsiConsole.MarkupLine($"[red]Błąd (Nieprawidłowy argument): {ex.Message} Spróbuj ponownie.[/]");
-                }
-                catch (IndexOutOfRangeException) // Dla błędów np. w input.Substring(1) jeśli ParseCoordinates by go nie obsłużyło
-                {
-                    AnsiConsole.MarkupLine($"[red]Błąd (Format): Nieprawidłowy format koordynatów. Spróbuj ponownie.[/]");
-                }
-                // === KONIEC POPRAWIONEJ KOLEJNOŚCI CATCH ===
-            }
-        }
+        // Usunięto GetPlayerShotCoordinates - teraz obsługa strzału jest w pętli StartGame
 
         static public void StartGame()
         {
             Console.Clear();
             Board playersBoard = new Board();
             Board computersBoard = new Board();
-            IBot bot = new BotEasy();
+            IBot bot = new BotEasy(); // Lub inny bot
 
             IPlayer player1 = new RealPlayer("Gracz 1", playersBoard);
 
@@ -146,8 +112,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                 {
                     AnsiConsole.MarkupLine("[bold]Wszystkie statki rozmieszczone przez gracza![/]");
                 }
-                AnsiConsole.MarkupLine("Strzałki - ruch, Spacja - obrót, Enter - postaw");
-                playersBoard.DisplayBoard(true, keyControl);
+                AnsiConsole.MarkupLine("Strzałki - ruch, Spacja - obrót, Enter - postaw, Esc - zakończ rozmieszczanie");
+                playersBoard.DisplayBoard(true, keyControl); // Przekazujemy keyControl
                 keyControl.HandleKeyPress();
             }
 
@@ -159,47 +125,96 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             var history = new HistoryTab();
             bool playerTurn = true;
+            playerShotCursorX = 0; // Reset pozycji kursora strzału na początku gry
+            playerShotCursorY = 0;
+            bool gameRunning = true;
 
-            while (true)
+            while (gameRunning)
             {
                 Console.Clear();
-                new BoardLayout(playersBoard, computersBoard, history);
+                // Przekazujemy do BoardLayout informację, czy jest tura gracza (dla kursora) i pozycję kursora
+                new BoardLayout(playersBoard, computersBoard, history, playerTurn, playerShotCursorX, playerShotCursorY);
 
                 if (playerTurn)
                 {
                     AnsiConsole.MarkupLine($"\n[bold steelblue]Tura gracza: {player1.Name}[/]");
-                    var (shotCol, shotRow) = GetPlayerShotCoordinates(computersBoard, player1.Name);
-                    ShotResult result = computersBoard.Shoot(shotCol, shotRow);
-                    string formattedCoords = FormatCoordinate(shotCol, shotRow);
+                    AnsiConsole.MarkupLine($"Wybierz pole strzałkami (Cel: {FormatCoordinate(playerShotCursorX, playerShotCursorY)}). Enter by strzelić.");
 
-                    AnsiConsole.Markup($"Strzał w {formattedCoords}: ");
-                    switch (result)
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    bool shotProcessedThisTurn = false;
+
+                    switch (key.Key)
                     {
-                        case ShotResult.Hit:
-                            AnsiConsole.MarkupLine("[orange1]TRAFIONY![/]");
-                            history.RecordShot(true);
+                        case ConsoleKey.LeftArrow:
+                            if (playerShotCursorX > 0) playerShotCursorX--;
                             break;
-                        case ShotResult.Sunk:
-                            AnsiConsole.MarkupLine("[red bold]TRAFIONY ZATOPIONY![/]");
-                            ShipBase sunkShipPlayerTarget = computersBoard.GetTile(shotRow, shotCol).OccupyingShip!;
-                            AnsiConsole.MarkupLine($"[red]Statek typu {sunkShipPlayerTarget.Name} został zatopiony![/]");
-                            computersBoard.MarkAroundSunkShip(sunkShipPlayerTarget);
-                            history.RecordShot(true);
-                            if (computersBoard.AreAllShipsSunk())
+                        case ConsoleKey.RightArrow:
+                            if (playerShotCursorX < Constants.BoardSize - 1) playerShotCursorX++;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (playerShotCursorY > 0) playerShotCursorY--;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (playerShotCursorY < Constants.BoardSize - 1) playerShotCursorY++;
+                            break;
+                        case ConsoleKey.Enter:
+                            Tile targetTile = computersBoard.GetTile(playerShotCursorY, playerShotCursorX); // (wiersz, kolumna)
+                            if (targetTile.IsHit)
                             {
-                                Console.Clear();
-                                new BoardLayout(playersBoard, computersBoard, history);
-                                AnsiConsole.MarkupLine($"\n[bold greenyellow]GRATULACJE, {player1.Name}! Wygrałeś, zatapiając wszystkie statki przeciwnika![/]");
-                                goto EndGame;
+                                AnsiConsole.MarkupLine("[yellow]To pole już zostało ostrzelane. Wybierz inne.[/]");
+                                Thread.Sleep(1200);
+                            }
+                            else
+                            {
+                                shotProcessedThisTurn = true;
+                                var (shotCol, shotRow) = (playerShotCursorX, playerShotCursorY);
+                                ShotResult result = computersBoard.Shoot(shotCol, shotRow);
+                                string formattedCoords = FormatCoordinate(shotCol, shotRow);
+
+                                AnsiConsole.Markup($"Strzał w {formattedCoords}: ");
+                                switch (result)
+                                {
+                                    case ShotResult.Hit:
+                                        AnsiConsole.MarkupLine("[orange1]TRAFIONY![/]");
+                                        history.RecordShot(true);
+                                        break;
+                                    case ShotResult.Sunk:
+                                        AnsiConsole.MarkupLine("[red bold]TRAFIONY ZATOPIONY![/]");
+                                        ShipBase sunkShipPlayerTarget = computersBoard.GetTile(shotRow, shotCol).OccupyingShip!;
+                                        AnsiConsole.MarkupLine($"[red]Statek typu {sunkShipPlayerTarget.Name} został zatopiony![/]");
+                                        computersBoard.MarkAroundSunkShip(sunkShipPlayerTarget);
+                                        history.RecordShot(true);
+                                        if (computersBoard.AreAllShipsSunk())
+                                        {
+                                            Console.Clear();
+                                            new BoardLayout(playersBoard, computersBoard, history, false, -1, -1); // Ostatni widok bez kursora
+                                            AnsiConsole.MarkupLine($"\n[bold greenyellow]GRATULACJE, {player1.Name}! Wygrałeś, zatapiając wszystkie statki przeciwnika![/]");
+                                            gameRunning = false;
+                                        }
+                                        break;
+                                    case ShotResult.Miss:
+                                        AnsiConsole.MarkupLine("[dodgerblue1]PUDŁO![/]");
+                                        history.RecordShot(false);
+                                        break;
+                                }
                             }
                             break;
-                        case ShotResult.Miss:
-                            AnsiConsole.MarkupLine("[dodgerblue1]PUDŁO![/]");
-                            history.RecordShot(false);
+                        default:
+                            // Ignoruj inne klawisze
                             break;
                     }
+
+                    if (gameRunning && shotProcessedThisTurn)
+                    {
+                        playerTurn = false;
+                        if (!computersBoard.AreAllShipsSunk())
+                        {
+                             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby rozpocząć turę komputera...");
+                             Console.ReadLine();
+                        }
+                    }
                 }
-                else
+                else // Tura komputera
                 {
                     AnsiConsole.MarkupLine($"\n[bold indianred]Tura komputera: {bot.Name}[/]");
                     Thread.Sleep(1000);
@@ -213,7 +228,6 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                     {
                         case ShotResult.Hit:
                             AnsiConsole.MarkupLine("[orange1]TRAFIONY! (Twój statek)[/]");
-                            history.RecordShot(true);
                             break;
                         case ShotResult.Sunk:
                             AnsiConsole.MarkupLine("[red bold]TRAFIONY ZATOPIONY! (Twój statek)[/]");
@@ -221,31 +235,31 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             AnsiConsole.MarkupLine($"[red]Twój statek typu {sunkShipBotTarget.Name} został zatopiony przez komputer![/]");
                             List<(int col, int row)> markedCells = playersBoard.MarkAroundSunkShip(sunkShipBotTarget);
                             bot.AddCellsToAvoid(markedCells);
-                            history.RecordShot(true);
                             if (playersBoard.AreAllShipsSunk())
                             {
                                 Console.Clear();
-                                new BoardLayout(playersBoard, computersBoard, history);
+                                new BoardLayout(playersBoard, computersBoard, history, false, -1, -1); // Ostatni widok
                                 AnsiConsole.MarkupLine($"\n[bold red1]NIESTETY, {bot.Name} zatopił wszystkie Twoje statki. Przegrałeś.[/]");
-                                goto EndGame;
+                                gameRunning = false;
                             }
                             break;
                         case ShotResult.Miss:
                             AnsiConsole.MarkupLine("[dodgerblue1]PUDŁO![/]");
-                            history.RecordShot(false);
                             break;
                     }
-                }
 
-                playerTurn = !playerTurn;
-                if (!computersBoard.AreAllShipsSunk() && !playersBoard.AreAllShipsSunk())
-                {
-                    AnsiConsole.MarkupLine("\nNaciśnij Enter, aby kontynuować...");
-                    Console.ReadLine();
+                    if (gameRunning)
+                    {
+                        playerTurn = true;
+                        if (!playersBoard.AreAllShipsSunk())
+                        {
+                            AnsiConsole.MarkupLine("\nNaciśnij Enter, aby rozpocząć swoją turę...");
+                            Console.ReadLine();
+                        }
+                    }
                 }
-            }
+            } // Koniec pętli while(gameRunning)
 
-        EndGame:
             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
             Console.ReadLine();
         }
@@ -273,7 +287,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             Console.Clear();
             AnsiConsole.WriteLine("Goodbye!");
             AnsiConsole.Write("Press 'Enter' to exit...");
-            Console.Read();
+            Console.Read(); // Użyj ReadKey() jeśli chcesz uniknąć potrzeby wciskania Enter po komunikacie
             Environment.Exit(0);
         }
     }
