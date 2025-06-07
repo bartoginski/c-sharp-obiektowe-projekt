@@ -7,6 +7,7 @@ using System;
 using System.Linq; 
 using System.Collections.Generic; 
 
+
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
     internal class Board : IBoard
@@ -243,16 +244,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             }
         }
 
-        // Usunięto _IsValidPlacementForPreview, ponieważ logika podglądu w GetBoardRenderable została uproszczona
-        // do bezpośredniego sprawdzania IsValidPlacement w KeyControl i kolorowania na tej podstawie.
-        // Jeśli bardziej złożony podgląd był potrzebny, można by go przywrócić.
-        // W obecnej implementacji GetBoardRenderable, podgląd jest prostszy.
-
         public bool IsValidPlacement(IShip ship, int startCol, int startRow, Direction direction)
         {
             var shipToCheck = ship as ShipBase;
             if (shipToCheck == null) return false;
 
+            // Sprawdzenie, czy statek mieści się w granicach planszy
             if (direction == Direction.Horizontal)
             {
                 if (startCol < 0 || startRow < 0 || startRow >= boardSize || startCol + ship.Length > boardSize)
@@ -263,7 +260,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 if (startCol < 0 || startRow < 0 || startCol >= boardSize || startRow + ship.Length > boardSize)
                     return false;
             }
-
+            
+            // Sprawdzenie, czy statek lub jego otoczenie nie koliduje z innym statkiem
             for (int i = 0; i < ship.Length; i++)
             {
                 int currentSegmentRow, currentSegmentCol;
@@ -278,6 +276,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     currentSegmentCol = startCol;
                 }
 
+                // Sprawdzenie pola i 8 pól dookoła
                 for (int rOffset = -1; rOffset <= 1; rOffset++)
                 {
                     for (int cOffset = -1; cOffset <= 1; cOffset++)
@@ -288,37 +287,19 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                         if (checkRow >= 0 && checkRow < boardSize && checkCol >= 0 && checkCol < boardSize)
                         {
                             Tile tileToVerify = GetTile(checkRow, checkCol);
+                            // Jeśli na sprawdzanym polu jest statek i nie jest to ten sam statek, który właśnie umieszczamy
                             if (tileToVerify.OccupyingShip != null && tileToVerify.OccupyingShip != shipToCheck) 
                             {
-                                bool isPartOfCurrentShipPlacement = false;
-                                for (int k = 0; k < shipToCheck.Length; ++k)
-                                {
-                                    if (direction == Direction.Horizontal && checkRow == startRow && checkCol == startCol + k)
-                                    {
-                                        isPartOfCurrentShipPlacement = true;
-                                        break;
-                                    }
-                                    if (direction == Direction.Vertical && checkCol == startCol && checkRow == startRow + k)
-                                    {
-                                        isPartOfCurrentShipPlacement = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!isPartOfCurrentShipPlacement)
-                                { 
-                                    return false;
-                                }
+                                return false;
                             }
                         }
                     }
                 }
-                if (GetTile(currentSegmentRow, currentSegmentCol).OccupyingShip != null && GetTile(currentSegmentRow, currentSegmentCol).OccupyingShip != shipToCheck)
-                {
-                    return false;
-                }
             }
             return true;
         }
+
+        // --- USUNIĘTA ZDUPLIKOWANA METODA ISVALIDPLACEMENT ---
+
     }
 }
