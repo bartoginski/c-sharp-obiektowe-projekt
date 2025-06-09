@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProgramowanieObiektoweProjekt.Enums
 {
-    public enum ShotResult
+    internal enum ShotResult
     {
         Miss,
         Hit,

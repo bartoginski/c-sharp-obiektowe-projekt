@@ -3,10 +3,14 @@ using ProgramowanieObiektoweProjekt.Interfaces;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Utils;
 using Spectre.Console;
+using System; 
+using System.Linq; 
+using System.Collections.Generic; 
+
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
-    public class Board
+    internal class Board : IBoard
     {
         private const int boardSize = Constants.BoardSize;
         private Tile[,] tiles = new Tile[boardSize, boardSize];
@@ -26,165 +30,276 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
         public Board()
         {
-            for (int i = 0; i < boardSize; i++)
+            for (int i = 0; i < boardSize; i++) // i to wiersz
             {
-                for (int j = 0; j < boardSize; j++)
+                for (int j = 0; j < boardSize; j++) // j to kolumna
                 {
                     tiles[i, j] = new Tile();
                 }
             }
         }
 
-        public Tile GetTile(int x, int y)
+        public Tile GetTile(int row, int col)
         {
-            return tiles[x, y];
+            if (row >= 0 && row < boardSize && col >= 0 && col < boardSize)
+            {
+                return tiles[row, col];
+            }
+            throw new ArgumentOutOfRangeException($"Koordynaty ({row},{col}) są poza planszą.");
         }
 
-        // Implementation of PlaceShip
-        public void PlaceShip(IShip ship, int x, int y, Direction direction)
+        public void PlaceShip(IShip ship, int startCol, int startRow, Direction direction)
         {
+            var shipBase = ship as ShipBase;
+            if (shipBase == null) throw new ArgumentException("Statek musi być typu ShipBase", nameof(ship));
+
+            shipBase.StartCol = startCol;
+            shipBase.StartRow = startRow;
+            shipBase.IsHorizontal = (direction == Direction.Horizontal);
+            shipBase.ClearOccupiedTiles(); 
+
             if (direction == Direction.Horizontal)
             {
-                for (int col = x; col < x + ship.Length; col++)
+                for (int col = startCol; col < startCol + ship.Length; col++)
                 {
-                    tiles[y, col].HasShip = true;
+                    GetTile(startRow, col).OccupyingShip = shipBase;
+                    shipBase.AddOccupiedTile(col, startRow);
                 }
             }
             else // Vertical
             {
-                for (int row = y; row < y + ship.Length; row++)
+                for (int row = startRow; row < startRow + ship.Length; row++)
                 {
-                    tiles[row, x].HasShip = true;
+                    GetTile(row, startCol).OccupyingShip = shipBase;
+                    shipBase.AddOccupiedTile(startCol, row);
                 }
             }
         }
 
-        // CHANGED: Implement shooting logic using Tile.IsHit and Tile.HasShip
-        public ShotResult Shoot(int x, int y)
+        public ShotResult Shoot(int col, int row) // col to kolumna, row to wiersz
         {
-            var tile = GetTile(y, x); // y=row, x=column (matches rest of code)
-            if (tile.IsHit)
+            Tile targetTile = GetTile(row, col);
+
+            if (targetTile.IsHit)
             {
-                // Already shot here; you might want to handle this differently
-                return ShotResult.Miss;
+                // Zwracamy Miss, aby uniknąć podwójnego karania gracza lub bota,
+                // logika sprawdzania IsHit przed strzałem jest w Menu.cs / BotEasy.cs
+                return ShotResult.Miss; 
             }
-            tile.IsHit = true;
-            if (tile.HasShip)
+
+            targetTile.IsHit = true;
+
+            if (targetTile.OccupyingShip != null)
             {
-                // (Optional) TODO: Add logic to check if a ship is sunk
+                targetTile.OccupyingShip.Hit();
+                if (targetTile.OccupyingShip.IsSunk)
+                {
+                    return ShotResult.Sunk;
+                }
                 return ShotResult.Hit;
             }
             return ShotResult.Miss;
         }
 
-        public void DisplayBoard(bool revealShips = true, KeyControl? keyControl = null)
+        public List<(int col, int row)> MarkAroundSunkShip(ShipBase sunkShip)
         {
-            AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl));
+            List<(int col, int row)> newlyMarkedCells = new List<(int, int)>();
+            if (sunkShip == null || !sunkShip.IsSunk) return newlyMarkedCells;
+
+            foreach (var (shipCol, shipRow) in sunkShip.OccupiedTilesList)
+            {
+                for (int rOffset = -1; rOffset <= 1; rOffset++)
+                {
+                    for (int cOffset = -1; cOffset <= 1; cOffset++)
+                    {
+                        int adjacentRow = shipRow + rOffset;
+                        int adjacentCol = shipCol + cOffset;
+
+                        if (adjacentRow >= 0 && adjacentRow < boardSize &&
+                            adjacentCol >= 0 && adjacentCol < boardSize)
+                        {
+                            Tile neighborTile = GetTile(adjacentRow, adjacentCol);
+                            if (!neighborTile.IsHit) // Oznaczaj tylko nietrafione wcześniej pola
+                            {
+                                neighborTile.IsHit = true; // Oznacz jako "trafione" (w sensie wyłączone z gry)
+                                newlyMarkedCells.Add((adjacentCol, adjacentRow));
+                            }
+                        }
+                    }
+                }
+            }
+            return newlyMarkedCells;
         }
 
-        public Table GetBoardRenderable(bool revealShips, KeyControl? keyControl = null)
+        public bool AreAllShipsSunk()
+        {
+            if (!ships.Any()) return true; 
+            return ships.All(ship => ship.IsSunk);
+        }
+
+        public void DisplayBoard(bool revealShips = true, KeyControl? keyControl = null)
+        {
+            // Domyślnie bez trybu strzelania i bez kursora dla tej uproszczonej metody
+            AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl, false, -1, -1));
+        }
+
+        // Zmodyfikowana sygnatura metody
+        public Table GetBoardRenderable(bool revealShips, KeyControl? keyControl = null, bool isShootingCursorActive = false, int shootCursorCol = -1, int shootCursorRow = -1)
         {
             string[] columnHeaders = Enumerable.Range(1, boardSize)
                 .Select(i => i.ToString())
                 .ToArray();
-            string[] rowHeaders = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+            string[] rowHeaders = Enumerable.Range(0, boardSize).Select(i => ((char)('A' + i)).ToString()).ToArray();
 
-            var board = new Table()
+            var boardTable = new Table()
                 .Border(TableBorder.Rounded)
                 .Expand()
                 .ShowRowSeparators();
-            // Add the empty corner cell
-            board.AddColumn(new TableColumn(""));
+
+            boardTable.AddColumn(new TableColumn(""));
             foreach (var header in columnHeaders)
             {
-                board.AddColumn(new TableColumn(header).Centered());
+                boardTable.AddColumn(new TableColumn(header).Centered());
             }
 
-            for (int i = 0; i < boardSize; i++)
+            for (int i = 0; i < boardSize; i++) // i to indeks wiersza
             {
                 var rowData = new string[boardSize + 1];
                 rowData[0] = rowHeaders[i];
-                for (int j = 0; j < boardSize; j++)
+                for (int j = 0; j < boardSize; j++) // j to indeks kolumny
                 {
-                    // TODO: handle shoots
-                    if (keyControl != null && !KeyControl.placementComplete && keyControl.IsShipPreviewTile(i, j))
-                    {
-                        rowData[j + 1] = "O";
-                    }
-                    else if (tiles[i, j]?.HasShip != null && tiles[i, j].HasShip && revealShips)
-                    {
-                        rowData[j + 1] = "\u25a0";
-                    }
-                    else
-                    {
-                        rowData[j + 1] = "~";
-                    }
-                }
-                board.AddRow(rowData);
-            }
-            return board;
-        }
+                    Tile currentTile = GetTile(i, j);
+                    string tileDisplay;
 
-        public bool IsValidPlacement(IShip ship, int startX, int startY, Direction direction)
-        {
-            bool IsSpaceAvailableAroundTile(int row, int col)
-            {
-                if (row < 0 || row >= boardSize || col < 0 || col >= boardSize)
-                    return false;
-
-                if (GetTile(row, col).HasShip)
-                    return false;
-
-                for (int deltaRow = -1; deltaRow <= 1; deltaRow++)
-                {
-                    for (int deltaCol = -1; deltaCol <= 1; deltaCol++)
+                    // Logika dla podglądu umieszczania statku (z KeyControl)
+                    if (keyControl != null && !KeyControl.placementComplete &&
+                        KeyControl.currentShipIndexForPlacement < ships.Count && // Dodatkowe sprawdzenie
+                        keyControl.IsShipPreviewTile(i, j)) // i = wiersz, j = kolumna
                     {
-                        int neighborRow = row + deltaRow;
-                        int neighborCol = col + deltaCol;
-
-                        if (neighborRow >= 0 && neighborRow < boardSize &&
-                            neighborCol >= 0 && neighborCol < boardSize &&
-                            GetTile(neighborRow, neighborCol).HasShip)
+                        var currentShipForPlacement = ships[KeyControl.currentShipIndexForPlacement];
+                        Direction currentPlacementDir = currentShipForPlacement.IsHorizontal ? Direction.Horizontal : Direction.Vertical;
+                        if (!IsValidPlacement(currentShipForPlacement, keyControl.GetCurrentX(), keyControl.GetCurrentY(), currentPlacementDir))
                         {
-                            return false;
+                            tileDisplay = "[red]o[/]"; // Nakładanie się lub zła pozycja
+                        }
+                        else
+                        {
+                           tileDisplay = "[yellow]O[/]"; // Poprawny podgląd
                         }
                     }
+                    // Logika dla kursora strzelania
+                    else if (isShootingCursorActive && j == shootCursorCol && i == shootCursorRow) // j = kolumna, i = wiersz
+                    {
+                        if (currentTile.IsHit)
+                        {
+                            tileDisplay = currentTile.OccupyingShip != null ? "[black on red]X[/]" : "[black on blue]M[/]";
+                        }
+                        else 
+                        {
+                            if (revealShips && currentTile.OccupyingShip != null) // Używane dla DevMode na planszy przeciwnika
+                            {
+                                tileDisplay = "[black on yellow]S[/]"; 
+                            }
+                            else
+                            {
+                                tileDisplay = "[black on yellow]~[/]"; 
+                            }
+                        }
+                    }
+                    // Normalne renderowanie komórki
+                    else
+                    {
+                        tileDisplay = GetRegularTileDisplay(currentTile, revealShips);
+                    }
+                    rowData[j + 1] = tileDisplay;
                 }
-                return true;
+                boardTable.AddRow(rowData);
             }
+            return boardTable;
+        }
 
+        private string GetRegularTileDisplay(Tile currentTile, bool revealShips)
+        {
+            if (currentTile.IsHit)
+            {
+                if (currentTile.OccupyingShip != null)
+                {
+                    return "[red]X[/]"; // Trafiony statek
+                }
+                else
+                {
+                    return "[blue]M[/]"; // Pudło (Miss)
+                }
+            }
+            else // Pole nie zostało jeszcze ostrzelane
+            {
+                if (revealShips && currentTile.OccupyingShip != null)
+                {
+                    return "[grey]S[/]"; // Statek (widoczny na planszy gracza lub DevMode)
+                }
+                else
+                {
+                    return "[deepskyblue1]~[/]"; // Woda
+                }
+            }
+        }
+
+        public bool IsValidPlacement(IShip ship, int startCol, int startRow, Direction direction)
+        {
+            var shipToCheck = ship as ShipBase;
+            if (shipToCheck == null) return false;
+
+            // Sprawdzenie, czy statek mieści się w granicach planszy
             if (direction == Direction.Horizontal)
             {
-                if (startX + ship.Length > boardSize)
-                {
+                if (startCol < 0 || startRow < 0 || startRow >= boardSize || startCol + ship.Length > boardSize)
                     return false;
-                }
-
-                for (int col = startX; col < startX + ship.Length; col++)
-                {
-                    if (!IsSpaceAvailableAroundTile(startY, col))
-                    {
-                        return false;
-                    }
-                }
             }
             else // Vertical
             {
-                if (startY + ship.Length > boardSize)
-                {
+                if (startCol < 0 || startRow < 0 || startCol >= boardSize || startRow + ship.Length > boardSize)
                     return false;
+            }
+            
+            // Sprawdzenie, czy statek lub jego otoczenie nie koliduje z innym statkiem
+            for (int i = 0; i < ship.Length; i++)
+            {
+                int currentSegmentRow, currentSegmentCol;
+                if (direction == Direction.Horizontal)
+                {
+                    currentSegmentRow = startRow;
+                    currentSegmentCol = startCol + i;
+                }
+                else 
+                {
+                    currentSegmentRow = startRow + i;
+                    currentSegmentCol = startCol;
                 }
 
-                for (int row = startY; row < startY + ship.Length; row++)
+                // Sprawdzenie pola i 8 pól dookoła
+                for (int rOffset = -1; rOffset <= 1; rOffset++)
                 {
-                    if (!IsSpaceAvailableAroundTile(row, startX))
+                    for (int cOffset = -1; cOffset <= 1; cOffset++)
                     {
-                        return false;
+                        int checkRow = currentSegmentRow + rOffset;
+                        int checkCol = currentSegmentCol + cOffset;
+
+                        if (checkRow >= 0 && checkRow < boardSize && checkCol >= 0 && checkCol < boardSize)
+                        {
+                            Tile tileToVerify = GetTile(checkRow, checkCol);
+                            // Jeśli na sprawdzanym polu jest statek i nie jest to ten sam statek, który właśnie umieszczamy
+                            if (tileToVerify.OccupyingShip != null && tileToVerify.OccupyingShip != shipToCheck) 
+                            {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
-
             return true;
         }
+
+        // --- USUNIĘTA ZDUPLIKOWANA METODA ISVALIDPLACEMENT ---
+
     }
 }

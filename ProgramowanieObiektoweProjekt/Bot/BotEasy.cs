@@ -9,48 +9,158 @@ internal class BotEasy : IBot
 {
     protected const int BoardSize = Constants.BoardSize;
     protected Random _rand = new();
-    protected List<(int x, int y)> _shotsMade = new();
-    protected Queue<(int x, int y)> _huntQueue = new();
+    protected HashSet<(int x, int y)> _shotsMade = new();
     protected bool _huntingMode = false;
+    protected (int x, int y)? _huntOrigin = null;
+    protected string _huntDirection = "unknown";
+    protected int _huntDirectionTried = 0;
     protected List<(int x, int y)> _hits = new();
 
     public virtual string Name => "Easy";
 
     public virtual Tuple<int, int> BotShotSelection()
     {
-        if (_huntingMode && _huntQueue.Any())
+        // Directional Hunt Mode
+        if (_huntingMode && _huntOrigin.HasValue)
         {
-            while (_huntQueue.Any())
+            var origin = _huntOrigin.Value;
+
+            if (_huntDirection == "unknown")
             {
-                var target = _huntQueue.Dequeue();
-                if (!_shotsMade.Contains(target))
+                // Try Up
+                (int x, int y) up = (origin.x, origin.y - 1);
+                if (IsInBounds(up) && !_shotsMade.Contains(up))
                 {
-                    _shotsMade.Add(target);
-                    return Tuple.Create(target.x, target.y);
+                    _huntDirection = "vertical";
+                    _huntDirectionTried = 0;
+                    _shotsMade.Add(up);
+                    return Tuple.Create(up.x, up.y);
                 }
+                // Try Down
+                (int x, int y) down = (origin.x, origin.y + 1);
+                if (IsInBounds(down) && !_shotsMade.Contains(down))
+                {
+                    _huntDirection = "vertical";
+                    _huntDirectionTried = 1;
+                    _shotsMade.Add(down);
+                    return Tuple.Create(down.x, down.y);
+                }
+                _huntDirection = "horizontal";
+                _huntDirectionTried = 0;
             }
-            RePopulateHuntQueueFromHits();
-            if (_huntQueue.Any())
+
+            if (_huntDirection == "vertical")
             {
-                var target = _huntQueue.Dequeue();
-                if (!_shotsMade.Contains(target))
+                // Hunt up and down from origin
+                for (int dir = 0; dir < 2; dir++)
                 {
-                    _shotsMade.Add(target);
-                    return Tuple.Create(target.x, target.y);
+                    int offset = 1;
+                    while (true)
+                    {
+                        int y = origin.y + (dir == 0 ? -offset : offset);
+                        (int x, int y) coord = (origin.x, y);
+                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                            break;
+                        _shotsMade.Add(coord);
+                        return Tuple.Create(coord.x, coord.y);
+                    }
                 }
+                _huntDirection = "horizontal";
+                _huntDirectionTried = 0;
             }
-            _huntingMode = false;
+
+            if (_huntDirection == "horizontal")
+            {
+                // Hunt left and right from origin
+                for (int dir = 0; dir < 2; dir++)
+                {
+                    int offset = 1;
+                    while (true)
+                    {
+                        int x = origin.x + (dir == 0 ? -offset : offset);
+                        (int x, int y) coord = (x, origin.y);
+                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                            break;
+                        _shotsMade.Add(coord);
+                        return Tuple.Create(coord.x, coord.y);
+                    }
+                }
+                _huntingMode = false;
+                _huntOrigin = null;
+                _huntDirection = "unknown";
+                _hits.Clear();
+            }
         }
 
+        // Default: Random shot
         while (true)
         {
             int x = _rand.Next(0, BoardSize);
             int y = _rand.Next(0, BoardSize);
-
-            if (!_shotsMade.Contains((x, y)))
+            (int x, int y) shot = (x, y);
+            if (!_shotsMade.Contains(shot))
             {
-                _shotsMade.Add((x, y));
+                _shotsMade.Add(shot);
                 return Tuple.Create(x, y);
+            }
+        }
+    }
+
+    public virtual void InformShotResult(Tuple<int, int> coord, ShotResult result)
+    {
+        (int x, int y) shot = (coord.Item1, coord.Item2);
+
+        if (result == ShotResult.Hit)
+        {
+            if (!_huntingMode)
+            {
+                _huntingMode = true;
+                _huntOrigin = shot;
+                _huntDirection = "unknown";
+                _huntDirectionTried = 0;
+                _hits.Clear();
+                _hits.Add(shot);
+            }
+            else
+            {
+                _hits.Add(shot);
+                if (_huntDirection == "vertical")
+                {
+                    if (shot.x != _huntOrigin.Value.x)
+                        _huntDirection = "horizontal";
+                }
+                else if (_huntDirection == "horizontal")
+                {
+                    if (shot.y != _huntOrigin.Value.y)
+                        _huntDirection = "vertical";
+                }
+            }
+        }
+        else if (result == ShotResult.Sunk)
+        {
+            _huntingMode = false;
+            _huntOrigin = null;
+            _huntDirection = "unknown";
+            _huntDirectionTried = 0;
+            _hits.Clear();
+        }
+        else if (result == ShotResult.Miss)
+        {
+            if (_huntingMode)
+            {
+                if (_huntDirection == "vertical")
+                {
+                    _huntDirection = "horizontal";
+                    _huntDirectionTried = 0;
+                }
+                else if (_huntDirection == "horizontal")
+                {
+                    _huntingMode = false;
+                    _huntOrigin = null;
+                    _huntDirection = "unknown";
+                    _huntDirectionTried = 0;
+                    _hits.Clear();
+                }
             }
         }
     }
@@ -66,7 +176,6 @@ internal class BotEasy : IBot
                 ship.IsHorizontal = (dir == Direction.Horizontal);
 
                 int x, y;
-
                 if (dir == Direction.Horizontal)
                 {
                     x = _rand.Next(0, BoardSize - ship.Length + 1);
@@ -87,65 +196,11 @@ internal class BotEasy : IBot
         }
     }
 
-    public virtual void InformShotResult(Tuple<int, int> coord, ShotResult result)
+    public virtual void AddCellsToAvoid(List<(int col, int row)> cells)
     {
-        if (result == ShotResult.Hit)
-        {
-            _huntingMode = true;
-            _hits.Add((coord.Item1, coord.Item2));
-            EnqueueAdjacent((coord.Item1, coord.Item2));
-        }
-        else if (result == ShotResult.Sunk)
-        {
-            _hits.Clear();
-            _huntQueue.Clear();
-            _huntingMode = false;
-        }
-    }
-
-    protected void EnqueueAdjacent((int x, int y) coord)
-    {
-        int col = coord.x;
-        int row = coord.y;
-
-        var adj = new List<(int x, int y)>
-        {
-            (col, row - 1),
-            (col, row + 1),
-            (col - 1, row),
-            (col + 1, row)
-        };
-
-        foreach (var t in adj)
-        {
-            if (IsInBounds(t) && !_shotsMade.Contains(t) && !_huntQueue.Contains(t))
-            {
-                _huntQueue.Enqueue(t);
-            }
-        }
-    }
-
-    protected void RePopulateHuntQueueFromHits()
-    {
-        _huntQueue.Clear();
-        foreach (var h in _hits)
-        {
-            EnqueueAdjacent(h);
-        }
+        // No-op for standard bots
     }
 
     protected bool IsInBounds((int x, int y) coord)
-    {
-        return coord.x >= 0 && coord.x < BoardSize &&
-               coord.y >= 0 && coord.y < BoardSize;
-    }
-
-    // CHANGED: Bot shooting now interacts with Board and uses IsHit via Board.Shoot
-    public virtual ShotResult BotShoot(Board board)
-    {
-        var target = BotShotSelection();
-        ShotResult result = board.Shoot(target.Item1, target.Item2);
-        InformShotResult(target, result);
-        return result;
-    }
+        => coord.x >= 0 && coord.x < BoardSize && coord.y >= 0 && coord.y < BoardSize;
 }
