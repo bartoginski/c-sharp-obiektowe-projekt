@@ -6,5 +6,5 @@ public static class Constants
     public const int BoardSize = 10;
     
     // Helpers properties
-    public const bool DevMode = false;
+    public const bool DevMode = true;
 }

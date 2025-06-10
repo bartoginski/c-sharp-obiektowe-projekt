@@ -7,25 +7,40 @@ using System.Linq;
 
 internal class BotHard : BotMedium
 {
-    private List<(int x, int y)> _diagonalShots = new();
-    private int _nextDiagonalIndex = 0;
+    // Track diagonal shots per sector
+    private Dictionary<int, HashSet<(int x, int y)>> _sectorDiagonalShots = new();
+    private Dictionary<int, int> _sectorDiagonalSizes = new();
+    private int _currentSector = 0;
+    private const int DIAGONAL_THRESHOLD = 80; // percent
 
     public override string Name => "Hard";
 
     public BotHard()
     {
-        // Generate all diagonal cells on the board (checkerboard pattern)
+        int half = BoardSize / 2;
+        // 0 = TL, 1 = TR, 2 = BL, 3 = BR
+        for (int i = 0; i < 4; i++)
+        {
+            _sectorDiagonalShots[i] = new HashSet<(int x, int y)>();
+            _sectorDiagonalSizes[i] = 0;
+        }
+        // Count diagonal cells in each sector
         for (int x = 0; x < BoardSize; x++)
+        {
             for (int y = 0; y < BoardSize; y++)
+            {
                 if ((x + y) % 2 == 0)
-                    _diagonalShots.Add((x, y));
-        // Shuffle diagonals for randomness
-        _diagonalShots = _diagonalShots.OrderBy(_ => _rand.Next()).ToList();
+                {
+                    int sector = GetSectorForCoord(x, y);
+                    _sectorDiagonalSizes[sector]++;
+                }
+            }
+        }
     }
 
     public override Tuple<int, int> BotShotSelection()
     {
-        // 1. Use hunt mode from base if active
+        // 1. Hunt mode (inherited)
         if (_huntingMode)
         {
             var huntMove = base.BotShotSelection();
@@ -35,116 +50,68 @@ internal class BotHard : BotMedium
             }
         }
 
-        // 2. Diagonal search
-        while (_nextDiagonalIndex < _diagonalShots.Count)
+        // 2. Shoot diagonals in sectors, up to 80% coverage in each
+        for (int i = 0; i < 4; i++)
         {
-            var coord = _diagonalShots[_nextDiagonalIndex++];
-            if (!_shotsMade.Contains(coord))
+            int sector = (_currentSector + i) % 4;
+            if (GetSectorDiagonalShotPercent(sector) < DIAGONAL_THRESHOLD)
             {
-                _shotsMade.Add(coord);
-                return Tuple.Create(coord.x, coord.y);
+                _currentSector = sector;
+                var coord = SelectDiagonalInSector(sector);
+                if (coord != null)
+                    return coord;
             }
         }
 
-        // 3. Use BotMedium's sector logic
+        // 3. Fallback: random (BotEasy)
         return base.BotShotSelection();
     }
 
-    public override void BotShipPlacement(Board board)
+    private int GetSectorForCoord(int x, int y)
     {
-        // Try to scatter ships as much as possible, maximizing minimum distance and no adjacency
-        var rnd = new Random();
-        var ships = board.ships.OrderByDescending(ship => ship.Length).ToList();
-        var placedShips = new List<(int x, int y, int length, bool isHorizontal)>();
-
-        foreach (var ship in ships)
-        {
-            bool placed = false;
-            int maxAttempts = 1000;
-            int attempts = 0;
-            (int x, int y, bool isHorizontal) bestPos = (0, 0, true);
-            int bestMinDist = -1;
-
-            while (!placed && attempts < maxAttempts)
-            {
-                bool isHorizontal = rnd.Next(2) == 0;
-                ship.IsHorizontal = isHorizontal;
-
-                int xMax = isHorizontal ? BoardSize - ship.Length : BoardSize - 1;
-                int yMax = isHorizontal ? BoardSize - 1 : BoardSize - ship.Length;
-
-                int x = rnd.Next(0, xMax + 1);
-                int y = rnd.Next(0, yMax + 1);
-
-                if (!IsValidPlacementWithNoAdjacency(board, x, y, isHorizontal, ship.Length))
-                {
-                    attempts++;
-                    continue;
-                }
-
-                // Calculate min distance to other ships
-                int minDist = int.MaxValue;
-                foreach (var other in placedShips)
-                {
-                    int x1 = x, y1 = y, x2 = other.x, y2 = other.y;
-                    // Get all tiles of this ship
-                    for (int j = 0; j < ship.Length; j++)
-                    {
-                        int sx = isHorizontal ? x1 + j : x1;
-                        int sy = isHorizontal ? y1 : y1 + j;
-                        for (int k = 0; k < other.length; k++)
-                        {
-                            int ox = other.isHorizontal ? x2 + k : x2;
-                            int oy = other.isHorizontal ? y2 : y2 + k;
-                            minDist = Math.Min(minDist, Math.Abs(sx - ox) + Math.Abs(sy - oy));
-                        }
-                    }
-                }
-                // Prefer positions with larger minimum distance from other ships
-                if (minDist > bestMinDist)
-                {
-                    bestMinDist = minDist;
-                    bestPos = (x, y, isHorizontal);
-                }
-
-                attempts++;
-            }
-
-            // Place at the best found position
-            ship.IsHorizontal = bestPos.isHorizontal;
-            if (board.IsValidPlacement(ship, bestPos.x, bestPos.y, bestPos.isHorizontal ? Direction.Horizontal : Direction.Vertical)
-                && IsValidPlacementWithNoAdjacency(board, bestPos.x, bestPos.y, bestPos.isHorizontal, ship.Length))
-            {
-                board.PlaceShip(ship, bestPos.x, bestPos.y, bestPos.isHorizontal ? Direction.Horizontal : Direction.Vertical);
-                placedShips.Add((bestPos.x, bestPos.y, ship.Length, bestPos.isHorizontal));
-            }
-        }
+        int half = BoardSize / 2;
+        if (x < half && y < half) return 0; // TL
+        if (x >= half && y < half) return 1; // TR
+        if (x < half && y >= half) return 2; // BL
+        return 3; // BR
     }
 
-    // Checks: ship fits, no adjacency (sides or corners)
-    private bool IsValidPlacementWithNoAdjacency(Board board, int x, int y, bool isHorizontal, int length)
+    private double GetSectorDiagonalShotPercent(int sector)
     {
-        int dx = isHorizontal ? 1 : 0;
-        int dy = isHorizontal ? 0 : 1;
+        if (_sectorDiagonalSizes[sector] == 0)
+            return 100.0; // sector has no diagonal cells left
+        return (_sectorDiagonalShots[sector].Count * 100.0) / _sectorDiagonalSizes[sector];
+    }
 
-        for (int i = 0; i < length; i++)
+    private Tuple<int, int>? SelectDiagonalInSector(int sector)
+    {
+        int half = BoardSize / 2;
+        int xStart = (sector == 0 || sector == 2) ? 0 : half;
+        int yStart = (sector == 0 || sector == 1) ? 0 : half;
+        int xEnd = (sector == 0 || sector == 2) ? half : BoardSize;
+        int yEnd = (sector == 0 || sector == 1) ? half : BoardSize;
+
+        List<(int x, int y)> candidates = new();
+        for (int x = xStart; x < xEnd; x++)
+            for (int y = yStart; y < yEnd; y++)
+                if ((x + y) % 2 == 0 && !_shotsMade.Contains((x, y)))
+                    candidates.Add((x, y));
+
+        if (candidates.Count > 0)
         {
-            int cx = x + dx * i;
-            int cy = y + dy * i;
-            for (int ox = -1; ox <= 1; ox++)
-            {
-                for (int oy = -1; oy <= 1; oy++)
-                {
-                    int nx = cx + ox;
-                    int ny = cy + oy;
-                    if (nx >= 0 && nx < BoardSize && ny >= 0 && ny < BoardSize)
-                    {
-                        if (board.GetTile(nx, ny).HasShip)
-                            return false;
-                    }
-                }
-            }
+            var coord = candidates[_rand.Next(candidates.Count)];
+            _shotsMade.Add(coord);
+            _sectorDiagonalShots[sector].Add(coord);
+            return Tuple.Create(coord.x, coord.y);
         }
-        return true;
+        return null;
+    }
+
+    public override void InformShotResult(Tuple<int, int> coord, ShotResult result)
+    {
+        int sector = GetSectorForCoord(coord.Item1, coord.Item2);
+        if ((coord.Item1 + coord.Item2) % 2 == 0)
+            _sectorDiagonalShots[sector].Add((coord.Item1, coord.Item2));
+        base.InformShotResult(coord, result);
     }
 }
