@@ -38,8 +38,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                         background: Color.White,
                         foreground: Color.Black))
                     .AddChoices(new[] {
-                        "Start game", "Games history", "Autors",
-                        "Exit",
+                        "Nowa gra", "Historia gier", "Autorzy",
+                        "Wyjscie",
                         }
                     ));
 
@@ -54,7 +54,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                 case "Autorzy":
                     Autors();
                     break;
-                case "Wyjście":
+                case "Wyjscie":
                     Exit();
                     break;
             }
@@ -113,7 +113,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             while (gameRunning)
             {
-                Console.Write("\x1b[2J\x1b[H");
+                Console.Clear();
                 new BoardLayout(playersBoard, computersBoard, history, playerTurn, playerShotCursorX, playerShotCursorY);
 
                 if (playerTurn)
@@ -273,21 +273,23 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 ╚██████╔╝██║  ██║██║  ██║██║  ██║╚██████╔╝███████╗                           
  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝                           
                                                                              
-██████╗ ███████╗██╗   ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗███╗   ██╗████████╗
-██╔══██╗██╔════╝██║   ██║██╔════╝██║     ██╔═══██╗██╔══██╗████╗ ████║██╔════╝████╗  ██║╚══██╔══
-██║  ██║█████╗  ██║   ██║█████╗  ██║     ██║   ██║██████╔╝██╔████╔██║█████╗  ██╔██╗ ██║   ██║  
+██████╗ ███████╗██╗   ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗███╗   ██╗████████╗  
+██╔══██╗██╔════╝██║   ██║██╔════╝██║     ██╔═══██╗██╔══██╗████╗ ████║██╔════╝████╗  ██║╚══██╔══╝ 
+██║  ██║█████╗  ██║   ██║█████╗  ██║     ██║   ██║██████╔╝██╔████╔██║█████╗  ██╔██╗ ██║   ██║ 
 ██║  ██║██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║     ██║   ██║██╔═══╝ ██║╚██╔╝██║██╔══╝  ██║╚██╗██║   ██║  
-██████╔╝███████╗ ╚████╔╝ ███████╗███████╗╚██████╔╝██║     ██║ ╚═╝ ██║███████╗██║ ╚████║   ██║  
-╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝[/]                                                          
+██████╔╝███████╗ ╚████╔╝ ███████╗███████╗╚██████╔╝██║     ██║ ╚═╝ ██║███████╗██║ ╚████║   ██║   
+╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚══════╝ ╚═════╝ ╚═╝     ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝[/] 
+                                                                             
+                                                         
 "
             ));
             
             Console.WriteLine(); // Dodatkowa linia odstępu
-            AnsiConsole.MarkupLine("- CEO: [green]Kamil Muc[/]");
-            AnsiConsole.MarkupLine("- Lead Developer: [green]Bartosz Ogiński[/]");
-            AnsiConsole.MarkupLine("- Główny Księgowy: [green]Jan Mrozewski[/]");
-            AnsiConsole.MarkupLine("- Specjalista ds. Marketingu: [green]Bartosz Nowak[/]");
-            AnsiConsole.MarkupLine("- Project Manager: [green]Patryk Parzyński[/]");
+            AnsiConsole.MarkupLine("- CEO [green]Kamil Muc[/]");
+            AnsiConsole.MarkupLine("- Lead Developer [green]Bartosz Ogiński[/]");
+            AnsiConsole.MarkupLine("- Główny Księgowy [green]Jan Mrozewski[/]");
+            AnsiConsole.MarkupLine("- Specjalista ds. Marketingu [green]Bartosz Nowak[/]");
+            AnsiConsole.MarkupLine("- Project Manager [green]Patryk Parzyński[/]");
 
             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
             Console.ReadLine();
