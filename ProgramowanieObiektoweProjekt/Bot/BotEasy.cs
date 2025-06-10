@@ -1,72 +1,166 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
-using System; // Dla Random, Tuple
-using System.Collections.Generic; // Dla List, Queue
-using System.Linq; // Dla .Any()
-
-// Zakładam, że IBot jest zdefiniowane w tym samym namespace lub jest odpowiedni using
-// np. using ProgramowanieObiektoweProjekt.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 internal class BotEasy : IBot
 {
     protected const int BoardSize = Constants.BoardSize;
     protected Random _rand = new();
-    // Lista _shotsMade powinna być dostępna dla Menu.cs, aby dodać pola wokół zatopionego statku gracza
-    // Można ją uczynić 'internal' lub dodać publiczną metodę do dodawania pól.
-    // Dla uproszczenia, zostawiam protected, ale Menu.cs nie będzie mogło bezpośrednio jej modyfikować.
-    // W Menu.cs można by przekazać listę tych pól do specjalnej metody w IBot.
-    // np. void AddAvoidCells(List<(int col, int row)> cells);
-    // Jeśli Menu.cs ma aktualizować _shotsMade, to musi być ono `internal` lub `public`.
-    // Zmieniam na `internal` dla tego przykładu.
-    internal List<(int x, int y)> _shotsMade = new(); // x to kolumna, y to wiersz
-    protected Queue<(int x, int y)> _huntQueue = new();
+    protected HashSet<(int x, int y)> _shotsMade = new();
     protected bool _huntingMode = false;
-    protected List<(int x, int y)> _hits = new(); // Przechowuje trafienia w aktualnie polowany statek
+    protected (int x, int y)? _huntOrigin = null;
+    protected string _huntDirection = "unknown";
+    protected int _huntDirectionTried = 0;
+    protected List<(int x, int y)> _hits = new();
 
-    public virtual string Name => "EasyBot"; // Zmieniono nazwę, "Easy" jest zbyt ogólne
+    public virtual string Name => "Easy";
 
     public virtual Tuple<int, int> BotShotSelection()
     {
-        if (_huntingMode && _huntQueue.Any())
+        // Directional Hunt Mode
+        if (_huntingMode && _huntOrigin.HasValue)
         {
-            while (_huntQueue.Any())
+            var origin = _huntOrigin.Value;
+
+            if (_huntDirection == "unknown")
             {
-                var target = _huntQueue.Dequeue();
-                if (!_shotsMade.Contains(target)) // Upewnij się, że to pole nie było już strzelane
+                // Try Up
+                (int x, int y) up = (origin.x, origin.y - 1);
+                if (IsInBounds(up) && !_shotsMade.Contains(up))
                 {
-                    _shotsMade.Add(target); 
-                    return Tuple.Create(target.x, target.y);
+                    _huntDirection = "vertical";
+                    _huntDirectionTried = 0;
+                    _shotsMade.Add(up);
+                    return Tuple.Create(up.x, up.y);
                 }
+                // Try Down
+                (int x, int y) down = (origin.x, origin.y + 1);
+                if (IsInBounds(down) && !_shotsMade.Contains(down))
+                {
+                    _huntDirection = "vertical";
+                    _huntDirectionTried = 1;
+                    _shotsMade.Add(down);
+                    return Tuple.Create(down.x, down.y);
+                }
+                _huntDirection = "horizontal";
+                _huntDirectionTried = 0;
             }
-            // Jeśli kolejka polowania jest pusta, ale nadal jesteśmy w trybie polowania
-            // (np. wszystkie bezpośrednie sąsiedztwa zostały ostrzelane lub były częścią zatopionego statku)
-            // spróbuj odbudować kolejkę z pozostałych trafień (jeśli są) lub wyjdź z trybu polowania
-            RePopulateHuntQueueFromHits(); 
-            if (_huntQueue.Any()) {
-                // Ponownie spróbuj pobrać z kolejki po repopulacji
-                 while (_huntQueue.Any()) {
-                    var target = _huntQueue.Dequeue();
-                    if (!_shotsMade.Contains(target)) {
-                        _shotsMade.Add(target);
-                        return Tuple.Create(target.x, target.y);
+
+            if (_huntDirection == "vertical")
+            {
+                // Hunt up and down from origin
+                for (int dir = 0; dir < 2; dir++)
+                {
+                    int offset = 1;
+                    while (true)
+                    {
+                        int y = origin.y + (dir == 0 ? -offset : offset);
+                        (int x, int y) coord = (origin.x, y);
+                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                            break;
+                        _shotsMade.Add(coord);
+                        return Tuple.Create(coord.x, coord.y);
                     }
                 }
+                _huntDirection = "horizontal";
+                _huntDirectionTried = 0;
             }
-            // Jeśli nadal nic, wyłącz tryb polowania
-            _huntingMode = false; 
+
+            if (_huntDirection == "horizontal")
+            {
+                // Hunt left and right from origin
+                for (int dir = 0; dir < 2; dir++)
+                {
+                    int offset = 1;
+                    while (true)
+                    {
+                        int x = origin.x + (dir == 0 ? -offset : offset);
+                        (int x, int y) coord = (x, origin.y);
+                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                            break;
+                        _shotsMade.Add(coord);
+                        return Tuple.Create(coord.x, coord.y);
+                    }
+                }
+                _huntingMode = false;
+                _huntOrigin = null;
+                _huntDirection = "unknown";
+                _hits.Clear();
+            }
         }
 
-        // Tryb losowego strzelania
+        // Default: Random shot
         while (true)
         {
-            int x = _rand.Next(0, BoardSize); // X to kolumna
-            int y = _rand.Next(0, BoardSize); // Y to wiersz
-
-            if (!_shotsMade.Contains((x, y)))
+            int x = _rand.Next(0, BoardSize);
+            int y = _rand.Next(0, BoardSize);
+            (int x, int y) shot = (x, y);
+            if (!_shotsMade.Contains(shot))
             {
-                _shotsMade.Add((x, y));
+                _shotsMade.Add(shot);
                 return Tuple.Create(x, y);
+            }
+        }
+    }
+
+    public virtual void InformShotResult(Tuple<int, int> coord, ShotResult result)
+    {
+        (int x, int y) shot = (coord.Item1, coord.Item2);
+
+        if (result == ShotResult.Hit)
+        {
+            if (!_huntingMode)
+            {
+                _huntingMode = true;
+                _huntOrigin = shot;
+                _huntDirection = "unknown";
+                _huntDirectionTried = 0;
+                _hits.Clear();
+                _hits.Add(shot);
+            }
+            else
+            {
+                _hits.Add(shot);
+                if (_huntDirection == "vertical")
+                {
+                    if (shot.x != _huntOrigin.Value.x)
+                        _huntDirection = "horizontal";
+                }
+                else if (_huntDirection == "horizontal")
+                {
+                    if (shot.y != _huntOrigin.Value.y)
+                        _huntDirection = "vertical";
+                }
+            }
+        }
+        else if (result == ShotResult.Sunk)
+        {
+            _huntingMode = false;
+            _huntOrigin = null;
+            _huntDirection = "unknown";
+            _huntDirectionTried = 0;
+            _hits.Clear();
+        }
+        else if (result == ShotResult.Miss)
+        {
+            if (_huntingMode)
+            {
+                if (_huntDirection == "vertical")
+                {
+                    _huntDirection = "horizontal";
+                    _huntDirectionTried = 0;
+                }
+                else if (_huntDirection == "horizontal")
+                {
+                    _huntingMode = false;
+                    _huntOrigin = null;
+                    _huntDirection = "unknown";
+                    _huntDirectionTried = 0;
+                    _hits.Clear();
+                }
             }
         }
     }
@@ -79,19 +173,18 @@ internal class BotEasy : IBot
             while (!placed)
             {
                 Direction dir = _rand.Next(2) == 0 ? Direction.Horizontal : Direction.Vertical;
-                ship.IsHorizontal = (dir == Direction.Horizontal); 
+                ship.IsHorizontal = (dir == Direction.Horizontal);
 
-                int x, y; 
-
+                int x, y;
                 if (dir == Direction.Horizontal)
                 {
-                    x = _rand.Next(0, BoardSize - ship.Length + 1); 
-                    y = _rand.Next(0, BoardSize); 
+                    x = _rand.Next(0, BoardSize - ship.Length + 1);
+                    y = _rand.Next(0, BoardSize);
                 }
-                else // Vertical
+                else
                 {
-                    x = _rand.Next(0, BoardSize); 
-                    y = _rand.Next(0, BoardSize - ship.Length + 1); 
+                    x = _rand.Next(0, BoardSize);
+                    y = _rand.Next(0, BoardSize - ship.Length + 1);
                 }
 
                 if (board.IsValidPlacement(ship, x, y, dir))
@@ -103,83 +196,11 @@ internal class BotEasy : IBot
         }
     }
 
-    public virtual void InformShotResult(Tuple<int, int> coord, ShotResult result)
+    public virtual void AddCellsToAvoid(List<(int col, int row)> cells)
     {
-        // coord to (kolumna, wiersz)
-        if (result == ShotResult.Hit)
-        {
-            _huntingMode = true;
-            if (!_hits.Contains((coord.Item1, coord.Item2)))
-            {
-                _hits.Add((coord.Item1, coord.Item2));
-            }
-            EnqueueAdjacent((coord.Item1, coord.Item2));
-        }
-        else if (result == ShotResult.Sunk)
-        {
-            // Po zatopieniu, plansza przeciwnika (gracza) jest aktualizowana przez Board.MarkAroundSunkShip.
-            // Bot powinien wyczyścić stan polowania na ten konkretny statek.
-            _hits.Clear(); 
-            _huntQueue.Clear(); 
-            _huntingMode = false; 
-            // Pętla gry w Menu.cs może dodatkowo poinformować bota o polach wokół zatopionego statku,
-            // aby dodał je do _shotsMade, jeśli IBot miałby metodę np. AddCellsToAvoid().
-            // Na razie bot dowie się, że te pola są "IsHit", jeśli spróbuje w nie strzelić
-            // i jego pętla w BotShotSelection pominie je, bo są już w _shotsMade (jeśli zostały tam dodane).
-        }
-        else if (result == ShotResult.Miss)
-        {
-            // Jeśli spudłowaliśmy w trybie polowania, to może oznaczać, że wybrany kierunek był zły.
-            // Obecna logika BotShotSelection (opróżnianie _huntQueue i ew. repopulacja) powinna to obsłużyć.
-        }
+        // No-op for standard bots
     }
 
-    protected void EnqueueAdjacent((int x, int y) coord) // x to kolumna, y to wiersz
-    {
-        int col = coord.x;
-        int row = coord.y;
-
-        var adj = new List<(int x, int y)>
-        {
-            (col, row - 1), // Up
-            (col, row + 1), // Down
-            (col - 1, row), // Left
-            (col + 1, row)  // Right
-        };
-
-        foreach (var t in adj)
-        {
-            if (IsInBounds(t) && !_shotsMade.Contains(t) && !_huntQueue.Contains(t))
-            {
-                _huntQueue.Enqueue(t);
-            }
-        }
-    }
-
-    protected void RePopulateHuntQueueFromHits()
-    {
-        _huntQueue.Clear(); 
-        foreach (var h_coord in _hits) // h_coord to (kolumna, wiersz)
-        {
-            EnqueueAdjacent(h_coord); 
-        }
-    }
-
-    protected bool IsInBounds((int x, int y) coord) // x to kolumna, y to wiersz
-    {
-        return coord.x >= 0 && coord.x < BoardSize &&
-               coord.y >= 0 && coord.y < BoardSize;
-    }
-
-    // Opcjonalna metoda, jeśli Menu.cs ma informować bota o polach do unikania
-    public void AddCellsToAvoid(List<(int col, int row)> cells)
-    {
-        foreach(var cell in cells)
-        {
-            if (!_shotsMade.Contains(cell))
-            {
-                _shotsMade.Add(cell);
-            }
-        }
-    }
+    protected bool IsInBounds((int x, int y) coord)
+        => coord.x >= 0 && coord.x < BoardSize && coord.y >= 0 && coord.y < BoardSize;
 }

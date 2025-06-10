@@ -3,7 +3,7 @@ using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Ships;
-using ProgramowanieObiektoweProjekt.Interfaces; // Upewnij się, że ten using jest dla IPlayer i IBot
+using ProgramowanieObiektoweProjekt.Interfaces;
 using Spectre.Console;
 using System;
 using System.Threading;
@@ -24,8 +24,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                               "  ██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║      ██╔════╝██╔════╝██║  ██║██║██╔══██╗\n" +
                               "  ██████╔╝███████║   ██║      ██║   ██║      █████╗  ███████╗███████║██║██████╔╝\n" +
                               "  ██╔══██╗██╔══██║   ██║      ██║   ██║      ██╔══╝  ╚════██║██╔══██║██║██╔═══╝ \n" +
-                              "  ██████╔╝██║  ██║   ██║      ██║   ███████╗███████╗███████║██║  ██║██║██║     \n" +
-                              "  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ");
+                              "  ██████╔╝██║  ██║   ██║      ██║   ███████╗ ███████╗███████║██║  ██║██║██║     \n" +
+                              "  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ");
         }
 
         static public void MenuDisplay()
@@ -38,8 +38,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                         background: Color.White,
                         foreground: Color.Black))
                     .AddChoices(new[] {
-                        "Start game", "Games history", "Autors",
-                        "Exit",
+                        "Nowa gra", "Historia gier", "Autorzy",
+                        "Wyjscie",
                         }
                     ));
 
@@ -187,7 +187,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                                         if (computersBoard.AreAllShipsSunk())
                                         {
                                             Console.Clear();
-                                            new BoardLayout(playersBoard, computersBoard, history, false, -1, -1); // Ostatni widok bez kursora
+                                            new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                             AnsiConsole.MarkupLine($"\n[bold greenyellow]GRATULACJE, {player1.Name}! Wygrałeś, zatapiając wszystkie statki przeciwnika![/]");
                                             gameRunning = false;
                                         }
@@ -197,27 +197,31 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                                         history.RecordShot(false);
                                         break;
                                 }
+
+                                if (gameRunning)
+                                {
+                                    if (result == ShotResult.Miss)
+                                    {
+                                        playerTurn = false;
+                                        AnsiConsole.MarkupLine("\nNaciśnij Enter, aby rozpocząć turę komputera...");
+                                        Console.ReadLine();
+                                    }
+                                    else
+                                    {
+                                        AnsiConsole.MarkupLine("\n[bold green]Trafienie! Masz kolejny strzał. Naciśnij Enter, aby kontynuować...[/]");
+                                        Console.ReadLine();
+                                    }
+                                 }
                             }
                             break;
                         default:
-                            // Ignoruj inne klawisze
                             break;
-                    }
-
-                    if (gameRunning && shotProcessedThisTurn)
-                    {
-                        playerTurn = false;
-                        if (!computersBoard.AreAllShipsSunk())
-                        {
-                             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby rozpocząć turę komputera...");
-                             Console.ReadLine();
-                        }
                     }
                 }
                 else // Tura komputera
                 {
                     AnsiConsole.MarkupLine($"\n[bold indianred]Tura komputera: {bot.Name}[/]");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1200);
                     var (botCol, botRow) = bot.BotShotSelection();
                     ShotResult result = playersBoard.Shoot(botCol, botRow);
                     bot.InformShotResult(Tuple.Create(botCol, botRow), result);
@@ -238,7 +242,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             if (playersBoard.AreAllShipsSunk())
                             {
                                 Console.Clear();
-                                new BoardLayout(playersBoard, computersBoard, history, false, -1, -1); // Ostatni widok
+                                new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                 AnsiConsole.MarkupLine($"\n[bold red1]NIESTETY, {bot.Name} zatopił wszystkie Twoje statki. Przegrałeś.[/]");
                                 gameRunning = false;
                             }
@@ -250,17 +254,22 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
                     if (gameRunning)
                     {
-                        playerTurn = true;
-                        if (!playersBoard.AreAllShipsSunk())
+                        if (result == ShotResult.Miss)
                         {
+                            playerTurn = true;
                             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby rozpocząć swoją turę...");
                             Console.ReadLine();
                         }
+                        else
+                        {
+                            AnsiConsole.MarkupLine("\n[bold red]Komputer trafił! Będzie strzelał ponownie.[/]");
+                            Thread.Sleep(1800);
+                        }
                     }
                 }
-            } // Koniec pętli while(gameRunning)
+            } 
 
-            AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
+            AnsiConsole.MarkupLine("\n[bold]Koniec gry! Naciśnij Enter, aby wrócić do menu głównego...[/]");
             Console.ReadLine();
         }
 
@@ -287,7 +296,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             Console.Clear();
             AnsiConsole.WriteLine("Goodbye!");
             AnsiConsole.Write("Press 'Enter' to exit...");
-            Console.Read(); // Użyj ReadKey() jeśli chcesz uniknąć potrzeby wciskania Enter po komunikacie
+            Console.ReadKey(); 
             Environment.Exit(0);
         }
     }

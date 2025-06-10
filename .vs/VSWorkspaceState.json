@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\ProgramowanieObiektoweProjekt",
+    "\\ProgramowanieObiektoweProjekt\\bin",
+    "\\ProgramowanieObiektoweProjekt\\Bot",
+    "\\ProgramowanieObiektoweProjekt\\Enums",
+    "\\ProgramowanieObiektoweProjekt\\Interfaces",
+    "\\ProgramowanieObiektoweProjekt\\Models",
+    "\\ProgramowanieObiektoweProjekt\\Models\\Boards",
+    "\\ProgramowanieObiektoweProjekt\\Models\\Menu",
+    "\\ProgramowanieObiektoweProjekt\\obj",
+    "\\ProgramowanieObiektoweProjekt\\obj\\Release\\net8.0"
+  ],
+  "SelectedNode": "\\ProgramowanieObiektoweProjekt\\Bot\\BotMedium.cs",
+  "PreviewInSolutionExplorer": false
+}
