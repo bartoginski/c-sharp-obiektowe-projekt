@@ -235,11 +235,11 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             {
                 if (revealShips && currentTile.OccupyingShip != null)
                 {
-                    return "[grey]S[/]"; // Statek (widoczny na planszy gracza lub DevMode)
+                    return "[grey]█[/]"; // Statek (widoczny na planszy gracza lub DevMode)
                 }
                 else
                 {
-                    return "[deepskyblue1]~[/]"; // Woda
+                    return "[deepskyblue1]░[/]"; // Woda
                 }
             }
         }
