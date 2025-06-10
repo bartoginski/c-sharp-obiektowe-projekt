@@ -45,16 +45,16 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             switch (choices)
             {
-                case "Start game":
+                case "Nowa gra":
                     StartGame();
                     break;
-                case "Games history":
+                case "Historia gier":
                     GamesHistory();
                     break;
-                case "Autors":
+                case "Autorzy":
                     Autors();
                     break;
-                case "Exit":
+                case "Wyjście":
                     Exit();
                     break;
             }
