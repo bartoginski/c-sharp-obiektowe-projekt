@@ -1,57 +1,54 @@
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 internal class BotEasy : IBot
 {
     protected const int BoardSize = Constants.BoardSize;
     protected Random _rand = new();
     protected HashSet<(int x, int y)> _shotsMade = new();
-    protected bool _huntingMode = false;
-    protected (int x, int y)? _huntOrigin = null;
-    protected string _huntDirection = "unknown";
     protected int _huntDirectionTried = 0;
-    protected List<(int x, int y)> _hits = new();
+    protected bool _huntingMode = false;
+    private List<(int x, int y)> _hits = new();
+    private (int x, int y)? _huntOrigin = null;
+    private Direction _huntDirection = Direction.Unknown;
 
     public virtual string Name => "Easy";
 
     public virtual Tuple<int, int> BotShotSelection()
     {
-        // Directional Hunt Mode
+        // Hunt mode - target around the hit
         if (_huntingMode && _huntOrigin.HasValue)
         {
             var origin = _huntOrigin.Value;
 
-            if (_huntDirection == "unknown")
+            if (_huntDirection == Direction.Unknown)
             {
-                // Try Up
+                // Try up first
                 (int x, int y) up = (origin.x, origin.y - 1);
-                if (IsInBounds(up) && !_shotsMade.Contains(up))
+                if (_isInBounds(up) && !_shotsMade.Contains(up))
                 {
-                    _huntDirection = "vertical";
+                    _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 0;
                     _shotsMade.Add(up);
                     return Tuple.Create(up.x, up.y);
                 }
-                // Try Down
+                // Try down
                 (int x, int y) down = (origin.x, origin.y + 1);
-                if (IsInBounds(down) && !_shotsMade.Contains(down))
+                if (_isInBounds(down) && !_shotsMade.Contains(down))
                 {
-                    _huntDirection = "vertical";
+                    _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 1;
                     _shotsMade.Add(down);
                     return Tuple.Create(down.x, down.y);
                 }
-                _huntDirection = "horizontal";
+                _huntDirection = Direction.Horizontal;
                 _huntDirectionTried = 0;
             }
 
-            if (_huntDirection == "vertical")
+            if (_huntDirection == Direction.Vertical)
             {
-                // Hunt up and down from origin
+                // Shoot up and down from origin
                 for (int dir = 0; dir < 2; dir++)
                 {
                     int offset = 1;
@@ -59,19 +56,19 @@ internal class BotEasy : IBot
                     {
                         int y = origin.y + (dir == 0 ? -offset : offset);
                         (int x, int y) coord = (origin.x, y);
-                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                        if (!_isInBounds(coord) || _shotsMade.Contains(coord))
                             break;
                         _shotsMade.Add(coord);
                         return Tuple.Create(coord.x, coord.y);
                     }
                 }
-                _huntDirection = "horizontal";
+                _huntDirection = Direction.Horizontal;
                 _huntDirectionTried = 0;
             }
 
-            if (_huntDirection == "horizontal")
+            if (_huntDirection == Direction.Horizontal)
             {
-                // Hunt left and right from origin
+                // Shoot left and right from origin
                 for (int dir = 0; dir < 2; dir++)
                 {
                     int offset = 1;
@@ -79,20 +76,21 @@ internal class BotEasy : IBot
                     {
                         int x = origin.x + (dir == 0 ? -offset : offset);
                         (int x, int y) coord = (x, origin.y);
-                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                        if (!_isInBounds(coord) || _shotsMade.Contains(coord))
                             break;
                         _shotsMade.Add(coord);
                         return Tuple.Create(coord.x, coord.y);
                     }
                 }
+                // No more directions to try
                 _huntingMode = false;
                 _huntOrigin = null;
-                _huntDirection = "unknown";
+                _huntDirection = Direction.Unknown;
                 _hits.Clear();
             }
         }
 
-        // Default: Random shot
+        // Random shot when not hunting
         while (true)
         {
             int x = _rand.Next(0, BoardSize);
@@ -114,9 +112,10 @@ internal class BotEasy : IBot
         {
             if (!_huntingMode)
             {
+                // Start hunting mode
                 _huntingMode = true;
                 _huntOrigin = shot;
-                _huntDirection = "unknown";
+                _huntDirection = Direction.Unknown;
                 _huntDirectionTried = 0;
                 _hits.Clear();
                 _hits.Add(shot);
@@ -124,23 +123,25 @@ internal class BotEasy : IBot
             else
             {
                 _hits.Add(shot);
-                if (_huntDirection == "vertical")
+                // Keep current direction if working
+                if (_huntDirection == Direction.Vertical)
                 {
                     if (shot.x != _huntOrigin.Value.x)
-                        _huntDirection = "horizontal";
+                        _huntDirection = Direction.Vertical;
                 }
-                else if (_huntDirection == "horizontal")
+                else if (_huntDirection == Direction.Horizontal)
                 {
                     if (shot.y != _huntOrigin.Value.y)
-                        _huntDirection = "vertical";
+                        _huntDirection = Direction.Vertical;
                 }
             }
         }
         else if (result == ShotResult.Sunk)
         {
+            // Ship destroyed - stop hunting
             _huntingMode = false;
             _huntOrigin = null;
-            _huntDirection = "unknown";
+            _huntDirection = Direction.Unknown;
             _huntDirectionTried = 0;
             _hits.Clear();
         }
@@ -148,16 +149,18 @@ internal class BotEasy : IBot
         {
             if (_huntingMode)
             {
-                if (_huntDirection == "vertical")
+                if (_huntDirection == Direction.Vertical)
                 {
-                    _huntDirection = "horizontal";
+                    // Try horizontal direction
+                    _huntDirection = Direction.Horizontal;
                     _huntDirectionTried = 0;
                 }
-                else if (_huntDirection == "horizontal")
+                else if (_huntDirection == Direction.Horizontal)
                 {
+                    // Give up hunting
                     _huntingMode = false;
                     _huntOrigin = null;
-                    _huntDirection = "unknown";
+                    _huntDirection = Direction.Unknown;
                     _huntDirectionTried = 0;
                     _hits.Clear();
                 }
@@ -167,7 +170,7 @@ internal class BotEasy : IBot
 
     public virtual void BotShipPlacement(Board board)
     {
-        foreach (var ship in board.ships) // Zakładamy, że board.ships to List<ShipBase>
+        foreach (var ship in board.Ships)
         {
             bool placed = false;
             while (!placed)
@@ -198,9 +201,9 @@ internal class BotEasy : IBot
 
     public virtual void AddCellsToAvoid(List<(int col, int row)> cells)
     {
-        // No-op for standard bots
+        // Not implemented for easy bot
     }
 
-    protected bool IsInBounds((int x, int y) coord)
+    private bool _isInBounds((int x, int y) coord)
         => coord.x >= 0 && coord.x < BoardSize && coord.y >= 0 && coord.y < BoardSize;
 }

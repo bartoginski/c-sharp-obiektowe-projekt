@@ -1,41 +1,36 @@
 using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Boards;
-using ProgramowanieObiektoweProjekt.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 internal class BotMedium : BotEasy
 {
     // Phases: 0 = 25%, 1 = 50%, 2 = 80%, 3 = random
     private int _phase = 0;
-    private readonly int[] _thresholds = { 25, 50, 80 };
-    private int _currentSector = 0; // 0 = TL, 1 = TR, 2 = BL, 3 = BR
+    private readonly int[] _thresholds = [25, 50, 80];
+    private int _currentSector = 0; // Current sector being targeted
     private Dictionary<int, HashSet<(int x, int y)>> _sectorShots = new();
     private Dictionary<int, int> _sectorSizes = new();
 
     public BotMedium()
     {
+        // Initialize sector tracking
         for (int i = 0; i < 4; i++)
             _sectorShots[i] = new HashSet<(int x, int y)>();
 
+        // Calculate sector sizes
         int half = BoardSize / 2;
-        _sectorSizes[0] = half * half;
-        _sectorSizes[1] = (BoardSize - half) * half;
-        _sectorSizes[2] = half * (BoardSize - half);
-        _sectorSizes[3] = (BoardSize - half) * (BoardSize - half);
+        _sectorSizes[0] = half * half; // Top-left
+        _sectorSizes[1] = (BoardSize - half) * half; // Top-right
+        _sectorSizes[2] = half * (BoardSize - half); // Bottom-left
+        _sectorSizes[3] = (BoardSize - half) * (BoardSize - half); // Bottom-right
     }
 
     public override string Name => "Medium";
 
     public override Tuple<int, int> BotShotSelection()
     {
-        // Use hunt mode from BotEasy if active
+        // Hunt mode takes priority
         if (_huntingMode)
         {
             var huntMove = base.BotShotSelection();
-            // If hunt mode actually returned a move, use it
-            // If the inherited logic falls through to random, proceed to sector logic
             if (huntMove != null && !_shotsMade.Contains((huntMove.Item1, huntMove.Item2)))
             {
                 return huntMove;
@@ -44,7 +39,7 @@ internal class BotMedium : BotEasy
 
         UpdatePhase();
 
-        // Try each sector, starting from current, for one that hasn't met the threshold
+        // Find a sector that needs more shots
         for (int i = 0; i < 4; i++)
         {
             int sector = (_currentSector + i) % 4;
@@ -57,7 +52,7 @@ internal class BotMedium : BotEasy
             }
         }
 
-        // All sectors past 80%: fallback to BotEasy
+        // All sectors done - use random shots
         return base.BotShotSelection();
     }
 
@@ -80,16 +75,16 @@ internal class BotMedium : BotEasy
     {
         if (_phase < _thresholds.Length)
             return _thresholds[_phase];
-        return 100; // After 80%, switch to random
+        return 100; // Switch to random after 80%
     }
 
     private int GetSectorForCoord(int x, int y)
     {
         int half = BoardSize / 2;
-        if (x < half && y < half) return 0; // TL
-        if (x >= half && y < half) return 1; // TR
-        if (x < half && y >= half) return 2; // BL
-        return 3; // BR
+        if (x < half && y < half) return 0; // Top-left
+        if (x >= half && y < half) return 1; // Top-right
+        if (x < half && y >= half) return 2; // Bottom-left
+        return 3; // Bottom-right
     }
 
     private double GetSectorShotPercent(int sector)

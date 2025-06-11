@@ -1,35 +1,30 @@
 using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Boards;
-using ProgramowanieObiektoweProjekt.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 internal class BotHard : BotMedium
 {
-    // Track diagonal shots per sector
+    // Track shots in each board sector
     private Dictionary<int, HashSet<(int x, int y)>> _sectorDiagonalShots = new();
     private Dictionary<int, int> _sectorDiagonalSizes = new();
     private int _currentSector = 0;
-    private const int DIAGONAL_THRESHOLD = 80; // percent
+    private const int DiagonalThreshold = 80; // Stop at 80% coverage
 
     public override string Name => "Hard";
 
     public BotHard()
     {
-        int half = BoardSize / 2;
-        // 0 = TL, 1 = TR, 2 = BL, 3 = BR
+        // Initialize 4 sectors: TL, TR, BL, BR
         for (int i = 0; i < 4; i++)
         {
             _sectorDiagonalShots[i] = new HashSet<(int x, int y)>();
             _sectorDiagonalSizes[i] = 0;
         }
+        
         // Count diagonal cells in each sector
         for (int x = 0; x < BoardSize; x++)
         {
             for (int y = 0; y < BoardSize; y++)
             {
-                if ((x + y) % 2 == 0)
+                if ((x + y) % 2 == 0) // Diagonal pattern
                 {
                     int sector = GetSectorForCoord(x, y);
                     _sectorDiagonalSizes[sector]++;
@@ -40,7 +35,7 @@ internal class BotHard : BotMedium
 
     public override Tuple<int, int> BotShotSelection()
     {
-        // 1. Hunt mode (inherited)
+        // Hunt mode first (from parent class)
         if (_huntingMode)
         {
             var huntMove = base.BotShotSelection();
@@ -50,11 +45,11 @@ internal class BotHard : BotMedium
             }
         }
 
-        // 2. Shoot diagonals in sectors, up to 80% coverage in each
+        // Try diagonal shots in each sector
         for (int i = 0; i < 4; i++)
         {
             int sector = (_currentSector + i) % 4;
-            if (GetSectorDiagonalShotPercent(sector) < DIAGONAL_THRESHOLD)
+            if (GetSectorDiagonalShotPercent(sector) < DiagonalThreshold)
             {
                 _currentSector = sector;
                 var coord = SelectDiagonalInSector(sector);
@@ -63,23 +58,23 @@ internal class BotHard : BotMedium
             }
         }
 
-        // 3. Fallback: random (BotEasy)
+        // Fallback to random shots
         return base.BotShotSelection();
     }
 
     private int GetSectorForCoord(int x, int y)
     {
         int half = BoardSize / 2;
-        if (x < half && y < half) return 0; // TL
-        if (x >= half && y < half) return 1; // TR
-        if (x < half && y >= half) return 2; // BL
-        return 3; // BR
+        if (x < half && y < half) return 0; // Top-left
+        if (x >= half && y < half) return 1; // Top-right
+        if (x < half && y >= half) return 2; // Bottom-left
+        return 3; // Bottom-right
     }
 
     private double GetSectorDiagonalShotPercent(int sector)
     {
         if (_sectorDiagonalSizes[sector] == 0)
-            return 100.0; // sector has no diagonal cells left
+            return 100.0;
         return (_sectorDiagonalShots[sector].Count * 100.0) / _sectorDiagonalSizes[sector];
     }
 

@@ -1,20 +1,18 @@
 ﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 using Spectre.Console;
-using System;
-using ProgramowanieObiektoweProjekt.Utils; // Dla Constants
+using ProgramowanieObiektoweProjekt.Utils;
 
 internal class BoardLayout
 {
-    private const int TerminalWidth = 120;  // Ustaw stałą szerokość terminala
-    private const int TerminalHeight = 50;  // Ustaw stałą wysokość terminala
+    private const int TerminalWidth = 120;  // Set constant terminal width
+    private const int TerminalHeight = 50;  // Set constant terminal height
 
-    // Zmodyfikowany konstruktor
     public BoardLayout(Board playerBoard, Board enemyBoard, HistoryTab history, bool isPlayerShootingTurn, int cursorCol, int cursorRow)
     {
-        // Ustawienie rozmiaru terminala - można rozważyć wywołanie tego rzadziej, np. raz na starcie gry
+        // Set terminal size - consider calling this less frequently, e.g. once at game start
          if (Console.WindowWidth != TerminalWidth || Console.WindowHeight != TerminalHeight)
          {
-             try { Console.SetWindowSize(TerminalWidth, TerminalHeight); } catch (Exception) { /* Ignoruj błędy, jeśli nie można ustawić */ }
+             try { Console.SetWindowSize(TerminalWidth, TerminalHeight); } catch (Exception) { /* Ignore errors if can't set size */ }
          }
 
 
@@ -38,18 +36,19 @@ internal class BoardLayout
                         .Expand())
             );
 
-        layout["PlayerBoard"].Update(new Panel(playerBoard.GetBoardRenderable(true, KeyControl.placementComplete ? null : new KeyControl(playerBoard))) // Przekazuj KeyControl tylko jeśli jest potrzebny
+        // Pass KeyControl only when needed for ship placement
+        layout["PlayerBoard"].Update(new Panel(playerBoard.GetBoardRenderable(true, KeyControl.PlacementComplete ? null : new KeyControl(playerBoard)))
             .Header("Twoja plansza")
             .Border(BoxBorder.Rounded)
             .Expand());
 
-        // Przekaż parametry kursora do GetBoardRenderable dla planszy przeciwnika
+        // Pass cursor parameters to enemy board for shooting mode
         layout["EnemyBoard"].Update(new Panel(enemyBoard.GetBoardRenderable(Constants.DevMode, null, isPlayerShootingTurn, cursorCol, cursorRow))
             .Header("Plansza przeciwnika")
             .Border(BoxBorder.Rounded)
             .Expand());
 
-        // AnsiConsole.Clear(); // Wyczyszczenie konsoli jest teraz w pętli StartGame
+        // Console clearing is now handled in StartGame loop
         AnsiConsole.Write(layout);
     }
 }

@@ -1,10 +1,4 @@
-﻿using ProgramowanieObiektoweProjekt.Enums; // Potrzebne dla Direction
-using ProgramowanieObiektoweProjekt.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProgramowanieObiektoweProjekt.Interfaces;
 
 namespace ProgramowanieObiektoweProjekt.Models.Ships
 {
@@ -12,23 +6,21 @@ namespace ProgramowanieObiektoweProjekt.Models.Ships
     {
         public string Name { get; protected set; }
         public int Length { get; protected set; }
-        public int NumberOfShips { get; protected set; } // Ta właściwość jest bardziej statyczna dla typu statku
+        public int NumberOfShips { get; protected set; } // Static property for ship type
 
-        public bool IsHorizontal { get; set; } = true; // Używane w KeyControl i BotEasy
+        public bool IsHorizontal { get; set; } = true; // Used in KeyControl and BotEasy
 
         protected int Hits;
         public bool IsSunk => Hits >= Length;
 
-        // Nowe właściwości do śledzenia pozycji statku
+        // Properties to track ship position on board
         public int StartCol { get; set; }
         public int StartRow { get; set; }
-        // Usunięto ShipDirection, ponieważ IsHorizontal już to pokrywa i jest używane
-        // public Direction ShipDirection { get; set; } 
         public List<(int col, int row)> OccupiedTilesList { get; private set; } = new List<(int, int)>();
 
         public virtual void Hit()
         {
-            if (!IsSunk) // Zliczaj trafienia tylko jeśli statek nie jest jeszcze zatopiony
+            if (!IsSunk) // Count hits only if ship is not already sunk
             {
                 Hits++;
             }
@@ -36,7 +28,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Ships
 
         public void AddOccupiedTile(int col, int row)
         {
-            if (!OccupiedTilesList.Contains((col, row))) // Unikaj duplikatów, choć nie powinno ich być
+            if (!OccupiedTilesList.Contains((col, row))) // Avoid duplicates
             {
                 OccupiedTilesList.Add((col, row));
             }
