@@ -7,11 +7,11 @@ internal class BotEasy : IBot
     protected const int BoardSize = Constants.BoardSize;
     protected Random _rand = new();
     protected HashSet<(int x, int y)> _shotsMade = new();
-    protected bool _huntingMode = false;
-    protected (int x, int y)? _huntOrigin = null;
-    protected Direction _huntDirection = Direction.Unknown;
     protected int _huntDirectionTried = 0;
-    protected List<(int x, int y)> _hits = new();
+    protected bool _huntingMode = false;
+    private List<(int x, int y)> _hits = new();
+    private (int x, int y)? _huntOrigin = null;
+    private Direction _huntDirection = Direction.Unknown;
 
     public virtual string Name => "Easy";
 
@@ -26,7 +26,7 @@ internal class BotEasy : IBot
             {
                 // Try Up
                 (int x, int y) up = (origin.x, origin.y - 1);
-                if (IsInBounds(up) && !_shotsMade.Contains(up))
+                if (_isInBounds(up) && !_shotsMade.Contains(up))
                 {
                     _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 0;
@@ -35,7 +35,7 @@ internal class BotEasy : IBot
                 }
                 // Try Down
                 (int x, int y) down = (origin.x, origin.y + 1);
-                if (IsInBounds(down) && !_shotsMade.Contains(down))
+                if (_isInBounds(down) && !_shotsMade.Contains(down))
                 {
                     _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 1;
@@ -56,7 +56,7 @@ internal class BotEasy : IBot
                     {
                         int y = origin.y + (dir == 0 ? -offset : offset);
                         (int x, int y) coord = (origin.x, y);
-                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                        if (!_isInBounds(coord) || _shotsMade.Contains(coord))
                             break;
                         _shotsMade.Add(coord);
                         return Tuple.Create(coord.x, coord.y);
@@ -76,7 +76,7 @@ internal class BotEasy : IBot
                     {
                         int x = origin.x + (dir == 0 ? -offset : offset);
                         (int x, int y) coord = (x, origin.y);
-                        if (!IsInBounds(coord) || _shotsMade.Contains(coord))
+                        if (!_isInBounds(coord) || _shotsMade.Contains(coord))
                             break;
                         _shotsMade.Add(coord);
                         return Tuple.Create(coord.x, coord.y);
@@ -164,7 +164,7 @@ internal class BotEasy : IBot
 
     public virtual void BotShipPlacement(Board board)
     {
-        foreach (var ship in board.ships) // Zakładamy, że board.ships to List<ShipBase>
+        foreach (var ship in board.Ships) // Zakładamy, że board.ships to List<ShipBase>
         {
             bool placed = false;
             while (!placed)
@@ -195,9 +195,8 @@ internal class BotEasy : IBot
 
     public virtual void AddCellsToAvoid(List<(int col, int row)> cells)
     {
-        // No-op for standard bots
     }
 
-    protected bool IsInBounds((int x, int y) coord)
+    private bool _isInBounds((int x, int y) coord)
         => coord.x >= 0 && coord.x < BoardSize && coord.y >= 0 && coord.y < BoardSize;
 }

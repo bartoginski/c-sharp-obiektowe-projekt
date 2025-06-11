@@ -6,7 +6,7 @@ internal class BotHard : BotMedium
     private Dictionary<int, HashSet<(int x, int y)>> _sectorDiagonalShots = new();
     private Dictionary<int, int> _sectorDiagonalSizes = new();
     private int _currentSector = 0;
-    private const int DIAGONAL_THRESHOLD = 80; // percent
+    private const int DiagonalThreshold = 80; // percent
 
     public override string Name => "Hard";
 
@@ -49,7 +49,7 @@ internal class BotHard : BotMedium
         for (int i = 0; i < 4; i++)
         {
             int sector = (_currentSector + i) % 4;
-            if (GetSectorDiagonalShotPercent(sector) < DIAGONAL_THRESHOLD)
+            if (GetSectorDiagonalShotPercent(sector) < DiagonalThreshold)
             {
                 _currentSector = sector;
                 var coord = SelectDiagonalInSector(sector);

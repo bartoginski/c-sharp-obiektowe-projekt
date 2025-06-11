@@ -37,7 +37,7 @@ internal class BoardLayout
                         .Expand())
             );
 
-        layout["PlayerBoard"].Update(new Panel(playerBoard.GetBoardRenderable(true, KeyControl.placementComplete ? null : new KeyControl(playerBoard))) // Przekazuj KeyControl tylko jeśli jest potrzebny
+        layout["PlayerBoard"].Update(new Panel(playerBoard.GetBoardRenderable(true, KeyControl.PlacementComplete ? null : new KeyControl(playerBoard))) // Przekazuj KeyControl tylko jeśli jest potrzebny
             .Header("Twoja plansza")
             .Border(BoxBorder.Rounded)
             .Expand());

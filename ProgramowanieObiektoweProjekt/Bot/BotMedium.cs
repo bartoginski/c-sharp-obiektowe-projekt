@@ -4,7 +4,7 @@ internal class BotMedium : BotEasy
 {
     // Phases: 0 = 25%, 1 = 50%, 2 = 80%, 3 = random
     private int _phase = 0;
-    private readonly int[] _thresholds = { 25, 50, 80 };
+    private readonly int[] _thresholds = [25, 50, 80];
     private int _currentSector = 0; // 0 = TL, 1 = TR, 2 = BL, 3 = BR
     private Dictionary<int, HashSet<(int x, int y)>> _sectorShots = new();
     private Dictionary<int, int> _sectorSizes = new();
