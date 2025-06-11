@@ -48,13 +48,13 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 return _tiles[row, col];
             }
 
-            throw new ArgumentOutOfRangeException($"Koordynaty ({row},{col}) są poza planszą.");
+            throw new ArgumentOutOfRangeException($"Coordinates ({row},{col}) are outside the board.");
         }
 
         public void PlaceShip(IShip ship, int startCol, int startRow, Direction direction)
         {
             var shipBase = ship as ShipBase;
-            if (shipBase == null) throw new ArgumentException("Statek musi być typu ShipBase", nameof(ship));
+            if (shipBase == null) throw new ArgumentException("Ship must be of type ShipBase", nameof(ship));
 
             shipBase.StartCol = startCol;
             shipBase.StartRow = startRow;
@@ -85,8 +85,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
             if (targetTile.IsHit)
             {
-                // Zwracamy Miss, aby uniknąć podwójnego karania gracza lub bota,
-                // logika sprawdzania IsHit przed strzałem jest w Menu.cs / BotEasy.cs
+                // Return Miss to avoid double-penalizing player or bot
+                // Hit checking logic is handled in Menu.cs / BotEasy.cs
                 return ShotResult.Miss;
             }
 
@@ -113,6 +113,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
             foreach (var (shipCol, shipRow) in sunkShip.OccupiedTilesList)
             {
+                // Mark all 8 surrounding tiles
                 for (int rOffset = -1; rOffset <= 1; rOffset++)
                 {
                     for (int cOffset = -1; cOffset <= 1; cOffset++)
@@ -124,8 +125,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                             adjacentCol >= 0 && adjacentCol < BoardSize)
                         {
                             Tile neighborTile = GetTile(adjacentRow, adjacentCol);
-                            if (neighborTile.IsHit) continue; // Oznaczaj tylko nietrafione wcześniej pola
-                            neighborTile.IsHit = true; // Oznacz jako "trafione" (w sensie wyłączone z gry)
+                            if (neighborTile.IsHit) continue; // Only mark previously unhit tiles
+                            neighborTile.IsHit = true; // Mark as "hit" (disabled from game)
                             newlyMarkedCells.Add((adjacentCol, adjacentRow));
                         }
                     }
@@ -142,11 +143,10 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
 
         public void DisplayBoard(bool revealShips = true, KeyControl? keyControl = null)
         {
-            // Domyślnie bez trybu strzelania i bez kursora dla tej uproszczonej metody
+            // Default without shooting mode and cursor for this simplified method
             AnsiConsole.Write(GetBoardRenderable(revealShips, keyControl, false, -1, -1));
         }
 
-        // Zmodyfikowana sygnatura metody
         public Table GetBoardRenderable(bool revealShips, KeyControl? keyControl = null,
             bool isShootingCursorActive = false, int shootCursorCol = -1, int shootCursorRow = -1)
         {
@@ -166,19 +166,19 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 boardTable.AddColumn(new TableColumn(header).Centered());
             }
 
-            for (int i = 0; i < BoardSize; i++) // i to indeks wiersza
+            for (int row = 0; row < BoardSize; row++)
             {
                 var rowData = new string[BoardSize + 1];
-                rowData[0] = rowHeaders[i];
-                for (int j = 0; j < BoardSize; j++) // j to indeks kolumny
+                rowData[0] = rowHeaders[row];
+                for (int col = 0; col < BoardSize; col++)
                 {
-                    Tile currentTile = GetTile(i, j);
+                    Tile currentTile = GetTile(row, col);
                     string tileDisplay;
 
-                    // Logika dla podglądu umieszczania statku (z KeyControl)
+                    // Ship placement preview logic (with KeyControl)
                     if (keyControl != null && !KeyControl.PlacementComplete &&
-                        KeyControl.CurrentShipIndexForPlacement < Ships.Count && // Dodatkowe sprawdzenie
-                        keyControl.IsShipPreviewTile(i, j)) // i = wiersz, j = kolumna
+                        KeyControl.CurrentShipIndexForPlacement < Ships.Count &&
+                        keyControl.IsShipPreviewTile(row, col)) // i = row, j = column
                     {
                         var currentShipForPlacement = Ships[KeyControl.CurrentShipIndexForPlacement];
                         Direction currentPlacementDir = currentShipForPlacement.IsHorizontal
@@ -187,16 +187,16 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                         if (!IsValidPlacement(currentShipForPlacement, keyControl.GetCurrentX(),
                                 keyControl.GetCurrentY(), currentPlacementDir))
                         {
-                            tileDisplay = "[red]o[/]"; // Nakładanie się lub zła pozycja
+                            tileDisplay = "[red]o[/]"; // Overlapping or invalid position
                         }
                         else
                         {
-                            tileDisplay = "[yellow]O[/]"; // Poprawny podgląd
+                            tileDisplay = "[yellow]O[/]"; // Valid preview
                         }
                     }
-                    // Logika dla kursora strzelania
-                    else if (isShootingCursorActive && j == shootCursorCol &&
-                             i == shootCursorRow) // j = kolumna, i = wiersz
+                    // Shooting cursor logic
+                    else if (isShootingCursorActive && col == shootCursorCol &&
+                             row == shootCursorRow)
                     {
                         if (currentTile.IsHit)
                         {
@@ -207,7 +207,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                         else
                         {
                             if (revealShips &&
-                                currentTile.OccupyingShip != null) // Używane dla DevMode na planszy przeciwnika
+                                currentTile.OccupyingShip != null) // Used for DevMode on opponent's board
                             {
                                 tileDisplay = "[black on yellow]S[/]";
                             }
@@ -217,13 +217,13 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                             }
                         }
                     }
-                    // Normalne renderowanie komórki
+                    // Normal tile rendering
                     else
                     {
                         tileDisplay = GetRegularTileDisplay(currentTile, revealShips);
                     }
 
-                    rowData[j + 1] = tileDisplay;
+                    rowData[col + 1] = tileDisplay;
                 }
 
                 boardTable.AddRow(rowData);
@@ -238,22 +238,22 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             {
                 if (currentTile.OccupyingShip != null)
                 {
-                    return "[red]X[/]"; // Trafiony statek
+                    return "[red]X[/]"; // Hit ship
                 }
                 else
                 {
-                    return "[blue]M[/]"; // Pudło (Miss)
+                    return "[blue]M[/]"; // Miss
                 }
             }
-            else // Pole nie zostało jeszcze ostrzelane
+            else // Tile has not been shot at yet
             {
                 if (revealShips && currentTile.OccupyingShip != null)
                 {
-                    return "[grey]█[/]"; // Statek (widoczny na planszy gracza lub DevMode)
+                    return "[grey]█[/]"; // Ship (visible on player's board or DevMode)
                 }
                 else
                 {
-                    return "[deepskyblue1]░[/]"; // Woda
+                    return "[deepskyblue1]░[/]"; // Water
                 }
             }
         }
@@ -263,7 +263,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
             var shipToCheck = ship as ShipBase;
             if (shipToCheck == null) return false;
 
-            // Sprawdzenie, czy statek mieści się w granicach planszy
+            // Check if ship fits within board boundaries
             if (direction == Direction.Horizontal)
             {
                 if (startCol < 0 || startRow < 0 || startRow >= BoardSize || startCol + ship.Length > BoardSize)
@@ -275,7 +275,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     return false;
             }
 
-            // Sprawdzenie, czy statek lub jego otoczenie nie koliduje z innym statkiem
+            // Check if ship or its surroundings collide with another ship
             for (int i = 0; i < ship.Length; i++)
             {
                 int currentSegmentRow, currentSegmentCol;
@@ -290,7 +290,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     currentSegmentCol = startCol;
                 }
 
-                // Sprawdzenie pola i 8 pól dookoła
+                // Check the tile and 8 surrounding tiles
                 for (int rOffset = -1; rOffset <= 1; rOffset++)
                 {
                     for (int cOffset = -1; cOffset <= 1; cOffset++)
@@ -301,7 +301,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                         if (checkRow >= 0 && checkRow < BoardSize && checkCol >= 0 && checkCol < BoardSize)
                         {
                             Tile tileToVerify = GetTile(checkRow, checkCol);
-                            // Jeśli na sprawdzanym polu jest statek i nie jest to ten sam statek, który właśnie umieszczamy
+                            // If there's a ship on the checked tile and it's not the same ship we're placing
                             if (tileToVerify.OccupyingShip != null && tileToVerify.OccupyingShip != shipToCheck)
                             {
                                 return false;

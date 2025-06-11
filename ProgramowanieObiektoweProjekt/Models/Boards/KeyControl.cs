@@ -7,18 +7,17 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
     {
         private readonly Board _board;
 
-        public static int CurrentShipIndexForPlacement = 0; // Indeks aktualnie umieszczanego statku
+        public static int CurrentShipIndexForPlacement = 0; // Index of currently placed ship
         public static bool PlacementComplete = false;
 
-        // Aktualne koordynaty "kursora" na planszy (lewego górnego rogu statku)
-        // x_coor to kolumna, y_coor to wiersz
+        // Current cursor coordinates on board (top-left corner of ship)
         private int _xCoor = 0;
         private int _yCoor = 0;
 
         public KeyControl(Board board)
         {
             _board = board;
-            // Resetuj stan przy tworzeniu nowego KeyControl, jeśli potrzebne
+            // Reset state when creating new KeyControl
             CurrentShipIndexForPlacement = 0;
             PlacementComplete = false;
             _xCoor = 0;
@@ -32,24 +31,20 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
         {
             if (PlacementComplete || CurrentShipIndexForPlacement >= _board.Ships.Count)
             {
-                PlacementComplete = true; // Upewnij się, że jest to ustawione
+                PlacementComplete = true;
                 return;
             }
 
             var currentShip = _board.Ships[CurrentShipIndexForPlacement];
             var key = Console.ReadKey(true).Key;
-
-            int prev_x = _xCoor;
-            int prev_y = _yCoor;
-            bool prev_isHor = currentShip.IsHorizontal;
-
+            
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
                     if (_xCoor > 0) _xCoor--;
                     break;
                 case ConsoleKey.RightArrow:
-                    // Ograniczenie ruchu w prawo, aby statek nie wyszedł poza planszę
+                    // Limit right movement so ship doesn't go off board
                     int maxX = Constants.BoardSize - (currentShip.IsHorizontal ? currentShip.Length : 1);
                     if (_xCoor < maxX) _xCoor++;
                     break;
@@ -57,29 +52,23 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     if (_yCoor > 0) _yCoor--;
                     break;
                 case ConsoleKey.DownArrow:
-                    // Ograniczenie ruchu w dół
+                    // Limit down movement
                     int maxY = Constants.BoardSize - (currentShip.IsHorizontal ? 1 : currentShip.Length);
                     if (_yCoor < maxY) _yCoor++;
                     break;
                 case ConsoleKey.Spacebar:
-                    // Spróbuj obrócić statek
+                    // Try to rotate ship
                     currentShip.IsHorizontal = !currentShip.IsHorizontal;
-                    // Sprawdź, czy po obrocie statek nadal mieści się na planszy i jest w prawidłowej pozycji
-                    // Jeśli nie, cofnij obrót i pozycję kursora (jeśli obrót go przesunął poza planszę)
-                    int newMaxX_afterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? currentShip.Length : 1);
-                    int newMaxY_afterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? 1 : currentShip.Length);
-
-                    if (_xCoor > newMaxX_afterRotate) _xCoor = newMaxX_afterRotate;
-                    if (_yCoor > newMaxY_afterRotate) _yCoor = newMaxY_afterRotate;
                     
-                    // Sprawdzenie, czy obrót jest w ogóle możliwy w tym miejscu
-                    // Jeśli po obrocie jest nieprawidłowe umieszczenie, cofnij obrót.
-                    // W tym miejscu nie używamy IsValidPlacement, bo to tylko zmiana orientacji.
-                    // IsValidPlacement jest używane przy Enter.
-                    // Jednak warto by było sprawdzić, czy obrót jest "legalny" w sensie granic planszy.
+                    // Check if ship still fits on board after rotation
+                    int newMaxXAfterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? currentShip.Length : 1);
+                    int newMaxYAfterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? 1 : currentShip.Length);
+
+                    if (_xCoor > newMaxXAfterRotate) _xCoor = newMaxXAfterRotate;
+                    if (_yCoor > newMaxYAfterRotate) _yCoor = newMaxYAfterRotate;
+                    
+                    // Full validation happens on Enter press
                     Direction prospectiveDir = currentShip.IsHorizontal ? Direction.Horizontal : Direction.Vertical;
-                    // Tutaj nie ma pełnej walidacji z Board.IsValidPlacement, bo to tylko rotacja
-                    // Pełna walidacja przy Enter.
                     break;
                 case ConsoleKey.Enter:
                     Direction dir = currentShip.IsHorizontal ? Direction.Horizontal : Direction.Vertical;
@@ -87,7 +76,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     {
                         _board.PlaceShip(currentShip, _xCoor, _yCoor, dir);
                         CurrentShipIndexForPlacement++;
-                        _xCoor = 0; // Reset pozycji dla następnego statku
+                        _xCoor = 0; // Reset position for next ship
                         _yCoor = 0;
                         if (CurrentShipIndexForPlacement >= _board.Ships.Count)
                         {
@@ -96,12 +85,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                     }
                     else
                     {
-                        // Opcjonalnie: sygnał dźwiękowy lub krótki komunikat o błędzie
-                        // AnsiConsole.MarkupLine("[red]Nie można umieścić statku w tym miejscu![/]");
-                        // Thread.Sleep(200); // Aby gracz zauważył
+                        // Optional: sound or error message
+                        // AnsiConsole.MarkupLine("[red]Cannot place ship here![/]");
+                        // Thread.Sleep(200);
                     }
                     break;
-                case ConsoleKey.Escape: // Pozwól na wcześniejsze zakończenie rozmieszczania
+                case ConsoleKey.Escape: // Allow early completion of placement
                     PlacementComplete = true;
                     break;
             }
@@ -118,7 +107,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 return row == _yCoor && col >= _xCoor && col < _xCoor + currentShip.Length;
             }
 
-            // Vertical
+            // Vertical placement
             return col == _xCoor && row >= _yCoor && row < _yCoor + currentShip.Length;
         }
     }
