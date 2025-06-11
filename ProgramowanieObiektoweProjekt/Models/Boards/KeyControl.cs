@@ -1,206 +1,132 @@
-﻿namespace ProgramowanieObiektoweProjekt.Models.Boards
+﻿using ProgramowanieObiektoweProjekt.Enums;
+using ProgramowanieObiektoweProjekt.Models.Ships; // Dla ShipBase
+using ProgramowanieObiektoweProjekt.Utils; // Dla Constants
+using System;
+using Spectre.Console; // Dla ewentualnych komunikatów, choć nie są tu używane bezpośrednio
+
+namespace ProgramowanieObiektoweProjekt.Models.Boards
 {
     internal class KeyControl
     {
         private readonly Board _board;
 
+        public static int currentShipIndexForPlacement = 0; // Indeks aktualnie umieszczanego statku
+        public static bool placementComplete = false;
+
+        // Aktualne koordynaty "kursora" na planszy (lewego górnego rogu statku)
+        // x_coor to kolumna, y_coor to wiersz
+        private int x_coor = 0;
+        private int y_coor = 0;
+
         public KeyControl(Board board)
         {
             _board = board;
+            // Resetuj stan przy tworzeniu nowego KeyControl, jeśli potrzebne
+            currentShipIndexForPlacement = 0;
+            placementComplete = false;
+            x_coor = 0;
+            y_coor = 0;
         }
-        static int currentShip = 0;
-        public static bool placementComplete = false;
 
-        int x_coor = 0;
-        int y_coor = 0;
+        public int GetCurrentX() => x_coor;
+        public int GetCurrentY() => y_coor;
 
         public void HandleKeyPress()
         {
+            if (placementComplete || currentShipIndexForPlacement >= _board.ships.Count)
+            {
+                placementComplete = true; // Upewnij się, że jest to ustawione
+                return;
+            }
+
+            var currentShip = _board.ships[currentShipIndexForPlacement];
             var key = Console.ReadKey(true).Key;
 
+            int prev_x = x_coor;
+            int prev_y = y_coor;
+            bool prev_isHor = currentShip.IsHorizontal;
 
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    if (x_coor > 0)
-                    {
-                        x_coor--;
-                    }
+                    if (x_coor > 0) x_coor--;
                     break;
                 case ConsoleKey.RightArrow:
-                    if (x_coor < 9 - (_board.ships[currentShip].IsHorizontal ? _board.ships[currentShip].Length - 1 : 0))
-                    {
-                        x_coor++;
-                    }
+                    // Ograniczenie ruchu w prawo, aby statek nie wyszedł poza planszę
+                    int maxX = Constants.BoardSize - (currentShip.IsHorizontal ? currentShip.Length : 1);
+                    if (x_coor < maxX) x_coor++;
                     break;
                 case ConsoleKey.UpArrow:
-                    if (y_coor > 0)
-                    {
-                        y_coor--;
-                    }
+                    if (y_coor > 0) y_coor--;
                     break;
                 case ConsoleKey.DownArrow:
-                    if (y_coor < 9 - (_board.ships[currentShip].IsHorizontal ? 0 : _board.ships[currentShip].Length - 1))
-                    {
-                        y_coor++;
-                    }
+                    // Ograniczenie ruchu w dół
+                    int maxY = Constants.BoardSize - (currentShip.IsHorizontal ? 1 : currentShip.Length);
+                    if (y_coor < maxY) y_coor++;
                     break;
                 case ConsoleKey.Spacebar:
-                    if (CanRotateShip())
-                    {
-                        _board.ships[currentShip].IsHorizontal = !_board.ships[currentShip].IsHorizontal;
-                    }
+                    // Spróbuj obrócić statek
+                    currentShip.IsHorizontal = !currentShip.IsHorizontal;
+                    // Sprawdź, czy po obrocie statek nadal mieści się na planszy i jest w prawidłowej pozycji
+                    // Jeśli nie, cofnij obrót i pozycję kursora (jeśli obrót go przesunął poza planszę)
+                    int newMaxX_afterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? currentShip.Length : 1);
+                    int newMaxY_afterRotate = Constants.BoardSize - (currentShip.IsHorizontal ? 1 : currentShip.Length);
+
+                    if (x_coor > newMaxX_afterRotate) x_coor = newMaxX_afterRotate;
+                    if (y_coor > newMaxY_afterRotate) y_coor = newMaxY_afterRotate;
+                    
+                    // Sprawdzenie, czy obrót jest w ogóle możliwy w tym miejscu
+                    // Jeśli po obrocie jest nieprawidłowe umieszczenie, cofnij obrót.
+                    // W tym miejscu nie używamy IsValidPlacement, bo to tylko zmiana orientacji.
+                    // IsValidPlacement jest używane przy Enter.
+                    // Jednak warto by było sprawdzić, czy obrót jest "legalny" w sensie granic planszy.
+                    Direction prospectiveDir = currentShip.IsHorizontal ? Direction.Horizontal : Direction.Vertical;
+                    // Tutaj nie ma pełnej walidacji z Board.IsValidPlacement, bo to tylko rotacja
+                    // Pełna walidacja przy Enter.
                     break;
                 case ConsoleKey.Enter:
-                    if (CanPlaceShipHere())
+                    Direction dir = currentShip.IsHorizontal ? Direction.Horizontal : Direction.Vertical;
+                    if (_board.IsValidPlacement(currentShip, x_coor, y_coor, dir))
                     {
-                        PlaceShipOnBoard();
-                        currentShip++;
-                        if (currentShip >= _board.ships.Count)
+                        _board.PlaceShip(currentShip, x_coor, y_coor, dir);
+                        currentShipIndexForPlacement++;
+                        x_coor = 0; // Reset pozycji dla następnego statku
+                        y_coor = 0;
+                        if (currentShipIndexForPlacement >= _board.ships.Count)
                         {
                             placementComplete = true;
                         }
                     }
+                    else
+                    {
+                        // Opcjonalnie: sygnał dźwiękowy lub krótki komunikat o błędzie
+                        // AnsiConsole.MarkupLine("[red]Nie można umieścić statku w tym miejscu![/]");
+                        // Thread.Sleep(200); // Aby gracz zauważył
+                    }
                     break;
-                case ConsoleKey.Escape:
+                case ConsoleKey.Escape: // Pozwól na wcześniejsze zakończenie rozmieszczania
                     placementComplete = true;
                     break;
             }
         }
 
-        // TODO: fix bug with rotation
         public bool IsShipPreviewTile(int row, int col)
         {
-            if (_board.ships[currentShip].IsHorizontal)
-            {
-                // If ship is horizontal, the row stays fixed (y_coor) and columns vary
-                return row == y_coor && col >= x_coor && col < x_coor + _board.ships[currentShip].Length;
-            }
-            // If ship is vertical, the column stays fixed (x_coor) and rows vary
-            return col == x_coor && row >= y_coor && row < y_coor + _board.ships[currentShip].Length;
-        }
+            if (placementComplete || currentShipIndexForPlacement >= _board.ships.Count)
+                return false;
 
-        // Check if tiles around are available
-        public bool IsTileAvaiable(int x_coor, int y_coor)
-        {
-            for (int deltaRow = -1; deltaRow <= 1; deltaRow++)
+            var currentShip = _board.ships[currentShipIndexForPlacement];
+            if (currentShip.IsHorizontal)
             {
-                for (int deltaCol = -1; deltaCol <= 1; deltaCol++)
-                {
-                    int neighborRow = x_coor + deltaRow;
-                    int neighborCol = y_coor + deltaCol;
-
-                    if (neighborRow >= 0 && neighborRow < 10 &&
-                        neighborCol >= 0 && neighborCol < 10 &&
-                        _board.GetTile(neighborRow, neighborCol).HasShip)
-                    {
-                        return false;
-                    }
-                }
+                return row == y_coor && col >= x_coor && col < x_coor + currentShip.Length;
             }
-            return true;
-        }
-
-        public bool CanRotateShip()
-        {
-            // If ship is currently horizontal and we want to check if it can be vertical
-            if (_board.ships[currentShip].IsHorizontal)
+            else // Vertical
             {
-                // Check if ship would fit vertically at current position
-                if (y_coor + _board.ships[currentShip].Length > 10)
-                {
-                    return false;
-                }
-        
-                // Check if there are no ships in the way when placed vertically
-                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
-                {
-                    if (_board.GetTile(row, x_coor).HasShip || !IsTileAvaiable(row, x_coor))
-                    {
-                        return false;
-                    }
-                }
-            }
-            // If ship is currently vertical and we want to check if it can be horizontal
-            else
-            {
-                // Check if ship would fit horizontally at current position
-                if (x_coor + _board.ships[currentShip].Length > 10)
-                {
-                    return false;
-                }
-        
-                // Check if there are no ships in the way when placed horizontally
-                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
-                {
-                    if (_board.GetTile(y_coor, col).HasShip || !IsTileAvaiable(y_coor, col))
-                    {
-                        return false;
-                    }
-                }
-            }
-    
-            return true;
-        }
-
-        public bool CanPlaceShipHere()
-        {
-            if (_board.ships[currentShip].IsHorizontal)
-            {
-                // For horizontal ships, check if it fits within the board horizontally
-                if (x_coor + _board.ships[currentShip].Length > 10)
-                {
-                    return false;
-                }
-        
-                // Check each column in the horizontal ship's placement
-                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
-                {
-                    if (_board.GetTile(y_coor, col).HasShip || !IsTileAvaiable(y_coor, col))
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                // For vertical ships, check if it fits within the board vertically
-                if (y_coor + _board.ships[currentShip].Length > 10)
-                {
-                    return false;
-                }
-        
-                // Check each row in the vertical ship's placement
-                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
-                {
-                    if (_board.GetTile(row, x_coor).HasShip || !IsTileAvaiable(row, x_coor))
-                    {
-                        return false;
-                    }
-                }
-            }
-    
-            return true;
-        }
-
-        public void PlaceShipOnBoard()
-        {
-            if (_board.ships[currentShip].IsHorizontal)
-            {
-                // Place a horizontal ship by setting HasShip to true for each column
-                for (int col = x_coor; col < x_coor + _board.ships[currentShip].Length; col++)
-                {
-                    _board.GetTile(y_coor, col).HasShip = true;
-                }
-            }
-            else
-            {
-                // Place a vertical ship by setting HasShip to true for each row
-                for (int row = y_coor; row < y_coor + _board.ships[currentShip].Length; row++)
-                {
-                    _board.GetTile(row, x_coor).HasShip = true;
-                }
+                return col == x_coor && row >= y_coor && row < y_coor + currentShip.Length;
             }
         }
+        // Usunięto CanRotateShip, CanPlaceShipHere, IsTileAvailable, ponieważ
+        // główną logikę walidacji przejmuje teraz Board.IsValidPlacement wywoływane przy Enter.
+        // Wizualny feedback (np. kolorowanie podglądu na czerwono) jest teraz w Board.GetBoardRenderable.
     }
 }

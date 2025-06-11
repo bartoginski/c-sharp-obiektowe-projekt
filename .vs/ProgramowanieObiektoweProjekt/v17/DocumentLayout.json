@@ -3,28 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\models\\boards\\board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\models\\boards\\board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\bot\\botmedium.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\bot\\botmedium.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\interfaces\\iboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\interfaces\\iboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\bot\\bothard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\bot\\bothard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\interfaces\\ibot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\interfaces\\ibot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\utils\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\utils\\constants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\bot\\boteasy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\bot\\boteasy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\models\\boards\\boardlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\models\\boards\\boardlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\interfaces\\ibot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\interfaces\\ibot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\interfaces\\iboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\interfaces\\iboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\models\\boards\\board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\models\\boards\\board.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|c:\\users\\barto\\onedrive\\dokumenty\\github\\c-sharp-obiektowe-projekt\\programowanieobiektoweprojekt\\models\\boards\\boardlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9C108324-A181-42C8-BCA1-0BD188197318}|ProgramowanieObiektoweProjekt\\ProgramowanieObiektoweProjekt.csproj|solutionrelative:programowanieobiektoweprojekt\\models\\boards\\boardlayout.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,33 +54,70 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "BoardLayout.cs",
-              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
-              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
-              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
-              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAyAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "Constants.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Utils\\Constants.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Utils\\Constants.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Utils\\Constants.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Utils\\Constants.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-01T09:47:09.783Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Board.cs",
-              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
-              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
-              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
-              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEUAAABQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T16:07:46.866Z",
+              "WhenOpened": "2025-06-09T21:00:04.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "BotHard.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotHard.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Bot\\BotHard.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotHard.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Bot\\BotHard.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T17:57:29.843Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BotMedium.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotMedium.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Bot\\BotMedium.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotMedium.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Bot\\BotMedium.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA1wIEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T17:56:50.267Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "BoardLayout.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\BoardLayout.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T09:47:09.783Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Board.cs",
+              "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Models\\Boards\\Board.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEUAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-31T16:07:46.866Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "IBoard.cs",
               "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Interfaces\\IBoard.cs",
               "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Interfaces\\IBoard.cs",
@@ -76,12 +125,11 @@
               "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Interfaces\\IBoard.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAowB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T16:07:42.374Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T16:07:42.374Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "IBot.cs",
               "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Interfaces\\IBot.cs",
               "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Interfaces\\IBot.cs",
@@ -89,25 +137,24 @@
               "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Interfaces\\IBot.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-31T15:30:09.018Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-31T15:30:09.018Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "BotEasy.cs",
               "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
               "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
               "ToolTip": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
               "RelativeToolTip": "ProgramowanieObiektoweProjekt\\Bot\\BotEasy.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAKIAAAAAAAAAAAAIwLgAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-31T15:27:38.553Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\barto\\OneDrive\\Dokumenty\\GitHub\\c-sharp-obiektowe-projekt\\ProgramowanieObiektoweProjekt\\Program.cs",
               "RelativeDocumentMoniker": "ProgramowanieObiektoweProjekt\\Program.cs",

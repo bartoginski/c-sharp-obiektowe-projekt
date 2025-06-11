@@ -1,5 +1,6 @@
-using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Models.Menu;
+using Spectre.Console;
+using System;
 
 namespace ProgramowanieObiektoweProjekt
 {
@@ -7,18 +8,12 @@ namespace ProgramowanieObiektoweProjekt
     {
         static void Main(string[] args)
         {
-
-            //// Tworzenie plansz i historii
-            //var playerBoard = new Board();
-            //var enemyBoard = new Board();
-            //var history = new HistoryTab();
-
-            //// (opcjonalnie: rozmieszczenie statków itd.)
-
-            //// Wyświetlenie layoutu z 2 planszami po lewej i historią po prawej2
-            //new BoardLayout(playerBoard, enemyBoard, history);
-
-            Menu.MenuDisplay();
+            // Pętla główna programu, która zapewnia powrót do menu
+            while (true)
+            {
+                Console.Clear(); // Czyszczenie konsoli przed wyświetleniem menu
+                Menu.MenuDisplay();
+            }
         }
     }
 }

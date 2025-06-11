@@ -1,10 +1,13 @@
 using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Boards;
+using ProgramowanieObiektoweProjekt.Models.Boards; // Dla klasy Board
+using System; // Dla Tuple
+using System.Collections.Generic; // Dla List
 
 internal interface IBot
 {
     string Name { get; }
     Tuple<int, int> BotShotSelection();
-    void BotShipPlacement(Board board);
+    void BotShipPlacement(Board board); // Board to konkretna klasa, nie interfejs IBoard
     void InformShotResult(Tuple<int, int> shotCoordinates, ShotResult result);
+    void AddCellsToAvoid(List<(int col, int row)> cells); // <-- DODAJ TĘ LINIĘ
 }
