@@ -1,20 +1,24 @@
-﻿using ProgramowanieObiektoweProjekt.Models.Player;
+using ProgramowanieObiektoweProjekt.Models.Player;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Interfaces;
 using Spectre.Console;
+using System;
+using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using ProgramowanieObiektoweProjekt;
 
 namespace ProgramowanieObiektoweProjekt.Models.Menu
 {
     internal class Menu
     {
-        // Variables to track player cursor position during shooting
-        private static int _playerShotCursorX = 0;
-        private static int _playerShotCursorY = 0;
+        static private int playerShotCursorX = 0;
+        static private int playerShotCursorY = 0;
 
-        private static void TitleDisplay()
+        static public void TitleDisplay()
         {
             Console.WriteLine("  ██████╗  █████╗ ████████╗████████╗██╗      ███████╗███████╗██╗  ██╗██╗██████╗\n" +
                               "  ██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║      ██╔════╝██╔════╝██║  ██║██║██╔══██╗\n" +
@@ -24,7 +28,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                               "  ╚═════╝ ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚══════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ");
         }
 
-        public static void MenuDisplay()
+        static public void MenuDisplay()
         {
             TitleDisplay();
             var choices = AnsiConsole.Prompt(
@@ -56,14 +60,13 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             }
         }
 
-        // Format coordinates for display
         private static string FormatCoordinate(int col, int row)
         {
             if (col < 0 || col >= Constants.BoardSize || row < 0 || row >= Constants.BoardSize) return "N/A";
             return $"{(char)('A' + row)}{col + 1}";
         }
-        
-        public static void StartGame()
+
+        static public void StartGame()
         {
             Console.Clear();
             Board playersBoard = new Board();
@@ -78,7 +81,6 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                     .AddChoices(new[] { "Easy", "Medium", "Hard" })
             );
 
-            // Create bot based on difficulty selection
             IBot bot;
             switch (botDifficulty)
             {
@@ -98,18 +100,17 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             AnsiConsole.MarkupLine("[bold underline]Rozmieszczanie statków przez gracza:[/]");
             AnsiConsole.MarkupLine("Użyj strzałek do poruszania, Spacji do obracania, Enter do umieszczenia statku.");
 
-            // Ship placement phase
             var keyControl = new KeyControl(playersBoard);
-            KeyControl.PlacementComplete = false;
-            KeyControl.CurrentShipIndexForPlacement = 0;
+            KeyControl.placementComplete = false;
+            KeyControl.currentShipIndexForPlacement = 0;
 
-            while (!KeyControl.PlacementComplete)
+            while (!KeyControl.placementComplete)
             {
                 Console.Clear();
-                if (KeyControl.CurrentShipIndexForPlacement < playersBoard.Ships.Count)
+                if (KeyControl.currentShipIndexForPlacement < playersBoard.ships.Count)
                 {
-                    AnsiConsole.MarkupLine($"[bold]Umieść statek: {playersBoard.Ships[KeyControl.CurrentShipIndexForPlacement].Name} (Długość: {playersBoard.Ships[KeyControl.CurrentShipIndexForPlacement].Length})[/]");
-                    AnsiConsole.MarkupLine($"Pozycja: {FormatCoordinate(keyControl.GetCurrentX(), keyControl.GetCurrentY())}, Orientacja: {(playersBoard.Ships[KeyControl.CurrentShipIndexForPlacement].IsHorizontal ? "Pozioma" : "Pionowa")}");
+                    AnsiConsole.MarkupLine($"[bold]Umieść statek: {playersBoard.ships[KeyControl.currentShipIndexForPlacement].Name} (Długość: {playersBoard.ships[KeyControl.currentShipIndexForPlacement].Length})[/]");
+                    AnsiConsole.MarkupLine($"Pozycja: {FormatCoordinate(keyControl.GetCurrentX(), keyControl.GetCurrentY())}, Orientacja: {(playersBoard.ships[KeyControl.currentShipIndexForPlacement].IsHorizontal ? "Pozioma" : "Pionowa")}");
                 }
                 else
                 {
@@ -122,46 +123,44 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             AnsiConsole.MarkupLine("\n[green]Statki gracza rozmieszczone![/]");
 
-            // Bot places ships automatically
             bot.BotShipPlacement(computersBoard);
             AnsiConsole.MarkupLine("[green]Statki komputera rozmieszczone![/]");
             Thread.Sleep(1500);
 
-            // Main game loop
             var history = new HistoryTab();
             bool playerTurn = true;
-            _playerShotCursorX = 0;
-            _playerShotCursorY = 0;
+            playerShotCursorX = 0;
+            playerShotCursorY = 0;
             bool gameRunning = true;
 
             while (gameRunning)
             {
-                Console.Write("\x1b[2J\x1b[H"); // Clear screen
-                new BoardLayout(playersBoard, computersBoard, history, playerTurn, _playerShotCursorX, _playerShotCursorY);
+                Console.Write("\x1b[2J\x1b[H");
+                new BoardLayout(playersBoard, computersBoard, history, playerTurn, playerShotCursorX, playerShotCursorY);
 
                 if (playerTurn)
                 {
                     AnsiConsole.MarkupLine($"\n[bold steelblue]Tura gracza: {player1.Name}[/]");
-                    AnsiConsole.MarkupLine($"Wybierz pole strzałkami (Cel: {FormatCoordinate(_playerShotCursorX, _playerShotCursorY)}). Enter by strzelić.");
+                    AnsiConsole.MarkupLine($"Wybierz pole strzałkami (Cel: {FormatCoordinate(playerShotCursorX, playerShotCursorY)}). Enter by strzelić.");
 
                     ConsoleKeyInfo key = Console.ReadKey(true);
-                    
+
                     switch (key.Key)
                     {
                         case ConsoleKey.LeftArrow:
-                            if (_playerShotCursorX > 0) _playerShotCursorX--;
+                            if (playerShotCursorX > 0) playerShotCursorX--;
                             break;
                         case ConsoleKey.RightArrow:
-                            if (_playerShotCursorX < Constants.BoardSize - 1) _playerShotCursorX++;
+                            if (playerShotCursorX < Constants.BoardSize - 1) playerShotCursorX++;
                             break;
                         case ConsoleKey.UpArrow:
-                            if (_playerShotCursorY > 0) _playerShotCursorY--;
+                            if (playerShotCursorY > 0) playerShotCursorY--;
                             break;
                         case ConsoleKey.DownArrow:
-                            if (_playerShotCursorY < Constants.BoardSize - 1) _playerShotCursorY++;
+                            if (playerShotCursorY < Constants.BoardSize - 1) playerShotCursorY++;
                             break;
                         case ConsoleKey.Enter:
-                            Tile targetTile = computersBoard.GetTile(_playerShotCursorY, _playerShotCursorX);
+                            Tile targetTile = computersBoard.GetTile(playerShotCursorY, playerShotCursorX);
                             if (targetTile.IsHit)
                             {
                                 AnsiConsole.MarkupLine("[yellow]To pole już zostało ostrzelane. Wybierz inne.[/]");
@@ -169,7 +168,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             }
                             else
                             {
-                                var (shotCol, shotRow) = (playerShotCursorX: _playerShotCursorX, playerShotCursorY: _playerShotCursorY);
+                                var (shotCol, shotRow) = (playerShotCursorX, playerShotCursorY);
                                 ShotResult result = computersBoard.Shoot(shotCol, shotRow);
                                 string formattedCoords = FormatCoordinate(shotCol, shotRow);
 
@@ -220,7 +219,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             break;
                     }
                 }
-                else // Bot turn
+                else
                 {
                     AnsiConsole.MarkupLine($"\n[bold indianred]Tura komputera: {bot.Name}[/]");
                     Thread.Sleep(1200);
@@ -269,26 +268,40 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                         }
                     }
                 }
-            } 
+            }
 
-            // Return to menu after pressing Enter
             AnsiConsole.MarkupLine("\n[bold]Koniec gry! Naciśnij Enter, aby wrócić do menu głównego...[/]");
             Console.ReadLine();
         }
 
-        public static void GamesHistory()
+        static public void GamesHistory()
         {
             Console.Clear();
-            AnsiConsole.MarkupLine("[yellow]Funkcja historii gier nie została jeszcze zaimplementowana.[/]");
-            // Return to menu after pressing Enter
+            var gameHistory = new GameHistory();
+            string[] lastThree = gameHistory.ReadLatestThreeGames();
+
+            if (lastThree.Length == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]Brak zapisanych gier w historii.[/]");
+            }
+            else
+            {
+                for (int i = 0; i < lastThree.Length; i++)
+                {
+                    AnsiConsole.MarkupLine($"[bold]--- Gra #{i + 1} ---[/]");
+                    AnsiConsole.WriteLine(lastThree[i]);
+                    AnsiConsole.WriteLine();
+                }
+                AnsiConsole.MarkupLine("[grey]Starsze zapisy gier znajdziesz w folderze [bold]'History'[/].[/]");
+            }
+
             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
             Console.ReadLine();
         }
 
         static public void Autors()
         {
-                        Console.Clear();
-            // Added ASCII logo
+            Console.Clear();
             AnsiConsole.Write(new Markup(
 @" [bold cyan]
  ██████╗  █████╗ ██████╗  █████╗  ██████╗ ███████╗                           
@@ -308,8 +321,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                                                          
 "
             ));
-            
-            Console.WriteLine(); // Extra spacing line
+
+            Console.WriteLine();
             AnsiConsole.MarkupLine("- CEO [green]Kamil Muc[/]");
             AnsiConsole.MarkupLine("- Lead Developer [green]Bartosz Ogiński[/]");
             AnsiConsole.MarkupLine("- Główny Księgowy [green]Jan Mrozewski[/]");
@@ -321,12 +334,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
         }
 
-        private static void Exit()
+        static public void Exit()
         {
             Console.Clear();
             AnsiConsole.WriteLine("Goodbye!");
             AnsiConsole.Write("Press 'Enter' to exit...");
-            Console.ReadKey(); 
+            Console.ReadKey();
             Environment.Exit(0);
         }
     }

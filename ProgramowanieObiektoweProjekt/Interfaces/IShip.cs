@@ -1,7 +1,13 @@
 ﻿namespace ProgramowanieObiektoweProjekt.Interfaces
 {
-    internal interface IShip
+    /// <summary>
+    /// Interface defining ships.
+    /// </summary>
+    public interface IShip
     {
+        /// <summary>
+        /// Length of ship min 1 max 4
+        /// </summary>
         int Length { get; }
         bool IsSunk { get; }
         void Hit();
