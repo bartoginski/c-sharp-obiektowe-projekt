@@ -17,14 +17,14 @@ internal class BotEasy : IBot
 
     public virtual Tuple<int, int> BotShotSelection()
     {
-        // Directional Hunt Mode
+        // Hunt mode - target around the hit
         if (_huntingMode && _huntOrigin.HasValue)
         {
             var origin = _huntOrigin.Value;
 
             if (_huntDirection == Direction.Unknown)
             {
-                // Try Up
+                // Try up first
                 (int x, int y) up = (origin.x, origin.y - 1);
                 if (_isInBounds(up) && !_shotsMade.Contains(up))
                 {
@@ -33,7 +33,7 @@ internal class BotEasy : IBot
                     _shotsMade.Add(up);
                     return Tuple.Create(up.x, up.y);
                 }
-                // Try Down
+                // Try down
                 (int x, int y) down = (origin.x, origin.y + 1);
                 if (_isInBounds(down) && !_shotsMade.Contains(down))
                 {
@@ -48,7 +48,7 @@ internal class BotEasy : IBot
 
             if (_huntDirection == Direction.Vertical)
             {
-                // Hunt up and down from origin
+                // Shoot up and down from origin
                 for (int dir = 0; dir < 2; dir++)
                 {
                     int offset = 1;
@@ -68,7 +68,7 @@ internal class BotEasy : IBot
 
             if (_huntDirection == Direction.Horizontal)
             {
-                // Hunt left and right from origin
+                // Shoot left and right from origin
                 for (int dir = 0; dir < 2; dir++)
                 {
                     int offset = 1;
@@ -82,6 +82,7 @@ internal class BotEasy : IBot
                         return Tuple.Create(coord.x, coord.y);
                     }
                 }
+                // No more directions to try
                 _huntingMode = false;
                 _huntOrigin = null;
                 _huntDirection = Direction.Unknown;
@@ -89,7 +90,7 @@ internal class BotEasy : IBot
             }
         }
 
-        // Default: Random shot
+        // Random shot when not hunting
         while (true)
         {
             int x = _rand.Next(0, BoardSize);
@@ -111,6 +112,7 @@ internal class BotEasy : IBot
         {
             if (!_huntingMode)
             {
+                // Start hunting mode
                 _huntingMode = true;
                 _huntOrigin = shot;
                 _huntDirection = Direction.Unknown;
@@ -121,6 +123,7 @@ internal class BotEasy : IBot
             else
             {
                 _hits.Add(shot);
+                // Keep current direction if working
                 if (_huntDirection == Direction.Vertical)
                 {
                     if (shot.x != _huntOrigin.Value.x)
@@ -135,6 +138,7 @@ internal class BotEasy : IBot
         }
         else if (result == ShotResult.Sunk)
         {
+            // Ship destroyed - stop hunting
             _huntingMode = false;
             _huntOrigin = null;
             _huntDirection = Direction.Unknown;
@@ -147,11 +151,13 @@ internal class BotEasy : IBot
             {
                 if (_huntDirection == Direction.Vertical)
                 {
+                    // Try horizontal direction
                     _huntDirection = Direction.Horizontal;
                     _huntDirectionTried = 0;
                 }
                 else if (_huntDirection == Direction.Horizontal)
                 {
+                    // Give up hunting
                     _huntingMode = false;
                     _huntOrigin = null;
                     _huntDirection = Direction.Unknown;
@@ -164,7 +170,7 @@ internal class BotEasy : IBot
 
     public virtual void BotShipPlacement(Board board)
     {
-        foreach (var ship in board.Ships) // Zakładamy, że board.ships to List<ShipBase>
+        foreach (var ship in board.Ships)
         {
             bool placed = false;
             while (!placed)
@@ -195,6 +201,7 @@ internal class BotEasy : IBot
 
     public virtual void AddCellsToAvoid(List<(int col, int row)> cells)
     {
+        // Not implemented for easy bot
     }
 
     private bool _isInBounds((int x, int y) coord)
