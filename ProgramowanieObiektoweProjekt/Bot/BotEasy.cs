@@ -9,7 +9,7 @@ internal class BotEasy : IBot
     protected HashSet<(int x, int y)> _shotsMade = new();
     protected bool _huntingMode = false;
     protected (int x, int y)? _huntOrigin = null;
-    protected string _huntDirection = "unknown";
+    protected Direction _huntDirection = Direction.Unknown;
     protected int _huntDirectionTried = 0;
     protected List<(int x, int y)> _hits = new();
 
@@ -22,13 +22,13 @@ internal class BotEasy : IBot
         {
             var origin = _huntOrigin.Value;
 
-            if (_huntDirection == "unknown")
+            if (_huntDirection == Direction.Unknown)
             {
                 // Try Up
                 (int x, int y) up = (origin.x, origin.y - 1);
                 if (IsInBounds(up) && !_shotsMade.Contains(up))
                 {
-                    _huntDirection = "vertical";
+                    _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 0;
                     _shotsMade.Add(up);
                     return Tuple.Create(up.x, up.y);
@@ -37,16 +37,16 @@ internal class BotEasy : IBot
                 (int x, int y) down = (origin.x, origin.y + 1);
                 if (IsInBounds(down) && !_shotsMade.Contains(down))
                 {
-                    _huntDirection = "vertical";
+                    _huntDirection = Direction.Vertical;
                     _huntDirectionTried = 1;
                     _shotsMade.Add(down);
                     return Tuple.Create(down.x, down.y);
                 }
-                _huntDirection = "horizontal";
+                _huntDirection = Direction.Horizontal;
                 _huntDirectionTried = 0;
             }
 
-            if (_huntDirection == "vertical")
+            if (_huntDirection == Direction.Vertical)
             {
                 // Hunt up and down from origin
                 for (int dir = 0; dir < 2; dir++)
@@ -62,11 +62,11 @@ internal class BotEasy : IBot
                         return Tuple.Create(coord.x, coord.y);
                     }
                 }
-                _huntDirection = "horizontal";
+                _huntDirection = Direction.Horizontal;
                 _huntDirectionTried = 0;
             }
 
-            if (_huntDirection == "horizontal")
+            if (_huntDirection == Direction.Horizontal)
             {
                 // Hunt left and right from origin
                 for (int dir = 0; dir < 2; dir++)
@@ -84,7 +84,7 @@ internal class BotEasy : IBot
                 }
                 _huntingMode = false;
                 _huntOrigin = null;
-                _huntDirection = "unknown";
+                _huntDirection = Direction.Unknown;
                 _hits.Clear();
             }
         }
@@ -113,7 +113,7 @@ internal class BotEasy : IBot
             {
                 _huntingMode = true;
                 _huntOrigin = shot;
-                _huntDirection = "unknown";
+                _huntDirection = Direction.Unknown;
                 _huntDirectionTried = 0;
                 _hits.Clear();
                 _hits.Add(shot);
@@ -121,15 +121,15 @@ internal class BotEasy : IBot
             else
             {
                 _hits.Add(shot);
-                if (_huntDirection == "vertical")
+                if (_huntDirection == Direction.Vertical)
                 {
                     if (shot.x != _huntOrigin.Value.x)
-                        _huntDirection = "horizontal";
+                        _huntDirection = Direction.Vertical;
                 }
-                else if (_huntDirection == "horizontal")
+                else if (_huntDirection == Direction.Horizontal)
                 {
                     if (shot.y != _huntOrigin.Value.y)
-                        _huntDirection = "vertical";
+                        _huntDirection = Direction.Vertical;
                 }
             }
         }
@@ -137,7 +137,7 @@ internal class BotEasy : IBot
         {
             _huntingMode = false;
             _huntOrigin = null;
-            _huntDirection = "unknown";
+            _huntDirection = Direction.Unknown;
             _huntDirectionTried = 0;
             _hits.Clear();
         }
@@ -145,16 +145,16 @@ internal class BotEasy : IBot
         {
             if (_huntingMode)
             {
-                if (_huntDirection == "vertical")
+                if (_huntDirection == Direction.Vertical)
                 {
-                    _huntDirection = "horizontal";
+                    _huntDirection = Direction.Horizontal;
                     _huntDirectionTried = 0;
                 }
-                else if (_huntDirection == "horizontal")
+                else if (_huntDirection == Direction.Horizontal)
                 {
                     _huntingMode = false;
                     _huntOrigin = null;
-                    _huntDirection = "unknown";
+                    _huntDirection = Direction.Unknown;
                     _huntDirectionTried = 0;
                     _hits.Clear();
                 }

@@ -2,6 +2,7 @@
 {
     internal enum Direction
     {
+        Unknown,
         Horizontal,
         Vertical
     }
