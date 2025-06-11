@@ -10,7 +10,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 {
     internal class Menu
     {
-        // Zmienne do śledzenia pozycji kursora gracza podczas strzelania
+        // Variables to track player cursor position during shooting
         private static int _playerShotCursorX = 0;
         private static int _playerShotCursorY = 0;
 
@@ -56,7 +56,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             }
         }
 
-        private static string FormatCoordinate(int col, int row) // col_idx_0, row_idx_0
+        // Format coordinates for display
+        private static string FormatCoordinate(int col, int row)
         {
             if (col < 0 || col >= Constants.BoardSize || row < 0 || row >= Constants.BoardSize) return "N/A";
             return $"{(char)('A' + row)}{col + 1}";
@@ -77,6 +78,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                     .AddChoices(new[] { "Easy", "Medium", "Hard" })
             );
 
+            // Create bot based on difficulty selection
             IBot bot;
             switch (botDifficulty)
             {
@@ -96,6 +98,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             AnsiConsole.MarkupLine("[bold underline]Rozmieszczanie statków przez gracza:[/]");
             AnsiConsole.MarkupLine("Użyj strzałek do poruszania, Spacji do obracania, Enter do umieszczenia statku.");
 
+            // Ship placement phase
             var keyControl = new KeyControl(playersBoard);
             KeyControl.PlacementComplete = false;
             KeyControl.CurrentShipIndexForPlacement = 0;
@@ -119,10 +122,12 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             AnsiConsole.MarkupLine("\n[green]Statki gracza rozmieszczone![/]");
 
+            // Bot places ships automatically
             bot.BotShipPlacement(computersBoard);
             AnsiConsole.MarkupLine("[green]Statki komputera rozmieszczone![/]");
             Thread.Sleep(1500);
 
+            // Main game loop
             var history = new HistoryTab();
             bool playerTurn = true;
             _playerShotCursorX = 0;
@@ -131,8 +136,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             while (gameRunning)
             {
-                //Console.Clear();
-                Console.Write("\x1b[2J\x1b[H");
+                Console.Write("\x1b[2J\x1b[H"); // Clear screen
                 new BoardLayout(playersBoard, computersBoard, history, playerTurn, _playerShotCursorX, _playerShotCursorY);
 
                 if (playerTurn)
@@ -216,7 +220,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             break;
                     }
                 }
-                else // Tura komputera
+                else // Bot turn
                 {
                     AnsiConsole.MarkupLine($"\n[bold indianred]Tura komputera: {bot.Name}[/]");
                     Thread.Sleep(1200);
@@ -267,7 +271,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                 }
             } 
 
-            // ZMIANA: Powrót do menu po wciśnięciu Enter
+            // Return to menu after pressing Enter
             AnsiConsole.MarkupLine("\n[bold]Koniec gry! Naciśnij Enter, aby wrócić do menu głównego...[/]");
             Console.ReadLine();
         }
@@ -276,7 +280,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
         {
             Console.Clear();
             AnsiConsole.MarkupLine("[yellow]Funkcja historii gier nie została jeszcze zaimplementowana.[/]");
-            // ZMIANA: Powrót do menu po wciśnięciu Enter
+            // Return to menu after pressing Enter
             AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
             Console.ReadLine();
         }
@@ -284,7 +288,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
         static public void Autors()
         {
                         Console.Clear();
-            // ZMIANA: Dodano logo ASCII
+            // Added ASCII logo
             AnsiConsole.Write(new Markup(
 @" [bold cyan]
  ██████╗  █████╗ ██████╗  █████╗  ██████╗ ███████╗                           
@@ -305,7 +309,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 "
             ));
             
-            Console.WriteLine(); // Dodatkowa linia odstępu
+            Console.WriteLine(); // Extra spacing line
             AnsiConsole.MarkupLine("- CEO [green]Kamil Muc[/]");
             AnsiConsole.MarkupLine("- Lead Developer [green]Bartosz Ogiński[/]");
             AnsiConsole.MarkupLine("- Główny Księgowy [green]Jan Mrozewski[/]");
