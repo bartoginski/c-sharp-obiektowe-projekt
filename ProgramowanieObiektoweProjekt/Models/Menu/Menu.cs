@@ -13,6 +13,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
         // Variables to track player cursor position during shooting
         private static int _playerShotCursorX = 0;
         private static int _playerShotCursorY = 0;
+        private static Stats stats = new Stats();
 
         private static void TitleDisplay()
         {
@@ -189,6 +190,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                                         if (computersBoard.AreAllShipsSunk())
                                         {
                                             Console.Clear();
+                                            stats.saveStats("Wygrana", history.ShotsFired, history.Hits, history.Misses);
                                             new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                             AnsiConsole.MarkupLine($"\n[bold greenyellow]GRATULACJE, {player1.Name}! Wygrałeś, zatapiając wszystkie statki przeciwnika![/]");
                                             gameRunning = false;
@@ -244,6 +246,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             if (playersBoard.AreAllShipsSunk())
                             {
                                 Console.Clear();
+                                stats.saveStats("Przegrana", history.ShotsFired, history.Hits, history.Misses);
                                 new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                 AnsiConsole.MarkupLine($"\n[bold red1]NIESTETY, {bot.Name} zatopił wszystkie Twoje statki. Przegrałeś.[/]");
                                 gameRunning = false;
@@ -279,9 +282,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
         public static void GamesHistory()
         {
             Console.Clear();
-            AnsiConsole.MarkupLine("[yellow]Funkcja historii gier nie została jeszcze zaimplementowana.[/]");
-            // Return to menu after pressing Enter
-            AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
+            stats.openStats();
+            Console.WriteLine("Wciśnij klawisz aby kontynuować...");
             Console.ReadLine();
         }
 

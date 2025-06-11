@@ -1,6 +1,7 @@
 ﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 using Spectre.Console;
 using ProgramowanieObiektoweProjekt.Utils;
+using ProgramowanieObiektoweProjekt.Models.Ships;
 
 internal class BoardLayout
 {
@@ -19,7 +20,22 @@ internal class BoardLayout
         var rightPanelContent = new Rows(
             new Markup("[bold underline]Historia[/]"),
             history.GetHistoryRenderable(),
-            new Markup("\n[bold underline]Instrukcja:[/]\n- Strzałki: poruszanie kursorem/statkiem\n- Enter: strzał/postawienie statku\n- Spacja: obrót statku (podczas rozmieszczania)\n- Wygrywasz, gdy zatopisz wszystkie statki przeciwnika\n- Powodzenia! \n- Ilosc mozliwych statkow do rozmieszczenia:")
+            new Markup("\n[bold underline]Instrukcja:[/]\n" +
+                       "- Strzałki: poruszanie kursorem/statkiem\n" +
+                       "- Enter: strzał/postawienie statku\n" +
+                       "- Spacja: obrót statku (podczas rozmieszczania)\n" +
+                       "- Wygrywasz, gdy zatopisz wszystkie statki przeciwnika\n" +
+                       "- Powodzenia! \n\n\n\n" +
+                       "Statki przeciwnika: \n\n" +
+                       $"BattleShip: {enemyBoard.Ships.OfType<BattleShip>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Cruiser:    {enemyBoard.Ships.OfType<Cruiser>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Destroyer:  {enemyBoard.Ships.OfType<Destroyer>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Submarine:  {enemyBoard.Ships.OfType<Submarine>().Count(ship => !ship.IsSunk)}\n\n\n\n" +
+                       "Twoje statki: \n\n" +
+                       $"BattleShip: {playerBoard.Ships.OfType<BattleShip>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Cruiser:    {playerBoard.Ships.OfType<Cruiser>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Destroyer:  {playerBoard.Ships.OfType<Destroyer>().Count(ship => !ship.IsSunk)}\n" +
+                       $"Submarine:  {playerBoard.Ships.OfType<Submarine>().Count(ship => !ship.IsSunk)}\n\n")
         );
 
         var layout = new Layout("Root")

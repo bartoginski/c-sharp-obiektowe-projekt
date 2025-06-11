@@ -202,7 +202,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                         {
                             tileDisplay = currentTile.OccupyingShip != null
                                 ? "[black on red]X[/]"
-                                : "[black on blue]M[/]";
+                                : "[black on blue]░[/]";
                         }
                         else
                         {
@@ -242,7 +242,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
                 else
                 {
-                    return "[blue]M[/]"; // Miss
+                    return "[blue]░[/]"; // Miss
                 }
             }
             else // Tile has not been shot at yet
@@ -253,7 +253,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
                 else
                 {
-                    return "[deepskyblue1]░[/]"; // Water
+                    return "[deepskyblue1][/]"; // Water
                 }
             }
         }
