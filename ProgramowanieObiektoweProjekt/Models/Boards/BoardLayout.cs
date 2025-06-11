@@ -1,7 +1,6 @@
 ﻿using ProgramowanieObiektoweProjekt.Models.Boards;
 using Spectre.Console;
-using System;
-using ProgramowanieObiektoweProjekt.Utils; // Dla Constants
+using ProgramowanieObiektoweProjekt.Utils;
 
 internal class BoardLayout
 {

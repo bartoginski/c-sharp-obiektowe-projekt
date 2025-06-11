@@ -1,8 +1,5 @@
 ﻿using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Ships; // Dla ShipBase
-using ProgramowanieObiektoweProjekt.Utils; // Dla Constants
-using System;
-using Spectre.Console; // Dla ewentualnych komunikatów, choć nie są tu używane bezpośrednio
+using ProgramowanieObiektoweProjekt.Utils;
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {

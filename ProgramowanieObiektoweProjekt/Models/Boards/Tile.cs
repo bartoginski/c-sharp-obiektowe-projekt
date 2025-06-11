@@ -1,4 +1,4 @@
-using ProgramowanieObiektoweProjekt.Models.Ships; // Potrzebne dla ShipBase
+using ProgramowanieObiektoweProjekt.Models.Ships;
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {

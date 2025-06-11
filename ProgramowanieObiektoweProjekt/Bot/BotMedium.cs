@@ -1,9 +1,4 @@
 using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Boards;
-using ProgramowanieObiektoweProjekt.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 internal class BotMedium : BotEasy
 {

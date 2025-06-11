@@ -3,13 +3,6 @@ using ProgramowanieObiektoweProjekt.Interfaces;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Utils;
 using Spectre.Console;
-using System; 
-using System.Linq; 
-using System.Collections.Generic; 
-using System; 
-using System.Linq; 
-using System.Collections.Generic; 
-
 
 namespace ProgramowanieObiektoweProjekt.Models.Boards
 {

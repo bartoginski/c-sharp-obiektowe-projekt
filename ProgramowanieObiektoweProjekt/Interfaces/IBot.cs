@@ -1,7 +1,5 @@
 using ProgramowanieObiektoweProjekt.Enums;
-using ProgramowanieObiektoweProjekt.Models.Boards; // Dla klasy Board
-using System; // Dla Tuple
-using System.Collections.Generic; // Dla List
+using ProgramowanieObiektoweProjekt.Models.Boards;
 
 internal interface IBot
 {

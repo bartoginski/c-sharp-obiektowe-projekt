@@ -1,14 +1,10 @@
-using ProgramowanieObiektoweProjekt.Models.Player;
+﻿using ProgramowanieObiektoweProjekt.Models.Player;
 using ProgramowanieObiektoweProjekt.Models.Boards;
 using ProgramowanieObiektoweProjekt.Utils;
 using ProgramowanieObiektoweProjekt.Enums;
 using ProgramowanieObiektoweProjekt.Models.Ships;
 using ProgramowanieObiektoweProjekt.Interfaces;
 using Spectre.Console;
-using System;
-using System.Threading;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ProgramowanieObiektoweProjekt.Models.Menu
 {

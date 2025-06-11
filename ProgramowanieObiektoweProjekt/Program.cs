@@ -1,6 +1,4 @@
 using ProgramowanieObiektoweProjekt.Models.Menu;
-using Spectre.Console;
-using System;
 
 namespace ProgramowanieObiektoweProjekt
 {
