@@ -10,6 +10,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using ProgramowanieObiektoweProjekt;
+using System.Collections;
 
 namespace ProgramowanieObiektoweProjekt.Models.Menu
 {
@@ -17,6 +18,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
     {
         static private int playerShotCursorX = 0;
         static private int playerShotCursorY = 0;
+        static private Stats stats = new Stats();
 
         static public void TitleDisplay()
         {
@@ -188,6 +190,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                                         if (computersBoard.AreAllShipsSunk())
                                         {
                                             Console.Clear();
+                                            stats.saveStats("Wygrana", history.ShotsFired, history.Hits, history.Misses);
                                             new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                             AnsiConsole.MarkupLine($"\n[bold greenyellow]GRATULACJE, {player1.Name}! Wygrałeś, zatapiając wszystkie statki przeciwnika![/]");
                                             gameRunning = false;
@@ -243,6 +246,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
                             if (playersBoard.AreAllShipsSunk())
                             {
                                 Console.Clear();
+                                stats.saveStats("Przegrana", history.ShotsFired, history.Hits, history.Misses);
                                 new BoardLayout(playersBoard, computersBoard, history, false, -1, -1);
                                 AnsiConsole.MarkupLine($"\n[bold red1]NIESTETY, {bot.Name} zatopił wszystkie Twoje statki. Przegrałeś.[/]");
                                 gameRunning = false;
@@ -277,25 +281,8 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
         static public void GamesHistory()
         {
             Console.Clear();
-            var gameHistory = new GameHistory();
-            string[] lastThree = gameHistory.ReadLatestThreeGames();
-
-            if (lastThree.Length == 0)
-            {
-                AnsiConsole.MarkupLine("[yellow]Brak zapisanych gier w historii.[/]");
-            }
-            else
-            {
-                for (int i = 0; i < lastThree.Length; i++)
-                {
-                    AnsiConsole.MarkupLine($"[bold]--- Gra #{i + 1} ---[/]");
-                    AnsiConsole.WriteLine(lastThree[i]);
-                    AnsiConsole.WriteLine();
-                }
-                AnsiConsole.MarkupLine("[grey]Starsze zapisy gier znajdziesz w folderze [bold]'History'[/].[/]");
-            }
-
-            AnsiConsole.MarkupLine("\nNaciśnij Enter, aby wrócić do menu głównego...");
+            stats.openStats();
+            Console.WriteLine("Wciśnij klawisz aby kontynuować...");
             Console.ReadLine();
         }
 

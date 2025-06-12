@@ -231,7 +231,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
                 else
                 {
-                    return "[blue]M[/]"; // Pudło (Miss)
+                    return "[blue]░[/]"; // Pudło (Miss)
                 }
             }
             else // Pole nie zostało jeszcze ostrzelane
@@ -242,7 +242,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Boards
                 }
                 else
                 {
-                    return "[deepskyblue1]░[/]"; // Woda
+                    return "[deepskyblue1][/]"; // Woda
                 }
             }
         }
