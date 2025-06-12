@@ -6,18 +6,20 @@ namespace ProgramowanieObiektoweProjekt.Models.Player
 {
     internal class CompPlayer : IPlayer
     {
-        public int Points { get; }
+        private int _points;
+        public int Points => _points;
 
         public string Name { get; }
         public Board Board { get; }
 
-        public List<(int x, int y, ShotResult result)> MoveHistory { get; } = new();
+        private readonly List<(int x, int y, ShotResult result)> _moveHistory = new();
+        public List<(int x, int y, ShotResult result)> MoveHistory => _moveHistory;
 
         public CompPlayer(string name, Board board)
         {
             Name = "Computer";
             Board = board;
-            Points = 0;
+            _points = 0;
         }
 
     }

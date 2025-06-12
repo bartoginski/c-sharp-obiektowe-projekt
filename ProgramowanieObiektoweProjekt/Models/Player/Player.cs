@@ -4,13 +4,23 @@ using ProgramowanieObiektoweProjekt.Models.Boards;
 
 namespace ProgramowanieObiektoweProjekt.Models.Player
 {
-    internal class RealPlayer(string name, Board board) : IPlayer
+    internal class RealPlayer :IPlayer
     {
-        public int Points { get; } = 0;
+        private int _points;
+        public int Points => _points;
+        
+        public string Name { get; }
+        public Board Board { get; }
 
-        public string Name { get; } = name;
-        public Board Board { get; } = board;
+        private readonly List<(int x, int y, ShotResult result)> _moveHistory = new();
+        public List<(int x, int y, ShotResult result)> MoveHistory => _moveHistory;
 
-        public List<(int x, int y, ShotResult result)> MoveHistory { get; } = new();
+        public RealPlayer(string name, Board board)
+        {
+            Name = name;
+            Board = board;
+            _points = 0;
+        }
+
     }
 }
