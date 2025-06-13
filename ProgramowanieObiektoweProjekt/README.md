@@ -253,7 +253,7 @@ System renderowania układu plansz w terminalu.
 
 Główny system menu z opcjami:
 - **Nowa gra** - rozpoczyna rozgrywkę z wyborem poziomu trudności
-- **Historia gier** - (placeholder)
+- **Historia gier** - wyświetlanie historii gier
 - **Autorzy** - informacje o twórcach
 - **Wyjście** - zamknięcie aplikacji
 
@@ -273,9 +273,9 @@ Główny system menu z opcjami:
 System wykorzystuje Spectre.Console do tworzenia kolorowego, interaktywnego interfejsu:
 
 - **Kolory stanu pól:**
-    - `[deepskyblue1]░[/]` - woda
+    - `[deepskyblue1] [/]` - woda
     - `[red]X[/]` - trafiony statek
-    - `[blue]M[/]` - pudło
+    - `[blue]░[/]` - pudło
     - `[yellow]O[/]` - podgląd umieszczania statku
 
 ## Enumy
@@ -356,7 +356,7 @@ public static class Constants
 
 ### 3. Kompletny system gry
 - **Automatyczne oznaczanie** pól wokół zatopionych statków
-- **Historia strzałów** z podstawowymi statystykami
+- **Historia gier** z podstawowymi statystykami
 - **Warunki zwycięstwa** z odpowiednimi komunikatami
 - **Przewidywanie kolizji** statków z regułą 1 pola odstępu
 
@@ -369,11 +369,10 @@ public static class Constants
 ## Możliwe rozszerzenia
 
 1. **Multiplayer online** - implementacja `IPlayer` dla graczy sieciowych
-2. **Zapisywanie gier** - rozszerzenie `HistoryTab` o persistencję danych
-3. **Nowe typy statków** - implementacja `IShip` dla specjalnych jednostek
-4. **Zaawansowane AI** - nowe strategie w systemie botów
+2. **Nowe typy statków** - implementacja `IShip` dla specjalnych jednostek
+3. **Zaawansowane AI** - nowe strategie w systemie botów
    5. AI oparte o zewnętrzny model.
-5. **Tryby gry** - różne warianty zasad i rozmiarów plansz
+4. **Tryby gry** - różne warianty zasad i rozmiarów plansz
 
 ## Obsługa błędów
 
