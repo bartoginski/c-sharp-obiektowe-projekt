@@ -137,7 +137,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
 
             while (gameRunning)
             {
-                Console.Write("\x1b[2J\x1b[H"); // Clear screen
+                Console.Clear();
                 new BoardLayout(playersBoard, computersBoard, history, playerTurn, _playerShotCursorX, _playerShotCursorY);
 
                 if (playerTurn)
