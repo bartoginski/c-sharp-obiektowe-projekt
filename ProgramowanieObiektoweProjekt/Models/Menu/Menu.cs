@@ -107,6 +107,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             while (!KeyControl.PlacementComplete)
             {
                 Console.Clear();
+                Console.Write("\x1b[2J\x1b[H"); // Clear lines with color text
                 if (KeyControl.CurrentShipIndexForPlacement < playersBoard.Ships.Count)
                 {
                     AnsiConsole.MarkupLine($"[bold]Umieść statek: {playersBoard.Ships[KeyControl.CurrentShipIndexForPlacement].Name} (Długość: {playersBoard.Ships[KeyControl.CurrentShipIndexForPlacement].Length})[/]");
@@ -138,6 +139,7 @@ namespace ProgramowanieObiektoweProjekt.Models.Menu
             while (gameRunning)
             {
                 Console.Clear();
+                Console.Write("\x1b[2J\x1b[H"); // Clear lines with color text
                 new BoardLayout(playersBoard, computersBoard, history, playerTurn, _playerShotCursorX, _playerShotCursorY);
 
                 if (playerTurn)
